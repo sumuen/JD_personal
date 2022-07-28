@@ -1,7 +1,8 @@
 /*
-cron 1 jd_dpqd.js
+cron: "1"
 店铺签到，各类店铺签到，有新的店铺直接添加token即可
 搬运cui521大佬脚本，请勿外传！！！
+原脚本名称 jd_dpqd.js
 环境变量:
 DPQDTK: token1&token2
 仓库不再提供token
@@ -19,9 +20,9 @@ if (!token.length) {
     return
 }
 const $ = new Env('店铺签到');
-const notify = $.isNode() ? require('./sendNotify') : '';
+const notify = $.isNode() ? require('../sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
-const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', allMessage = '', message;
 const JD_API_HOST = 'https://api.m.jd.com/api?appid=interCenter_shopSign';
@@ -59,7 +60,7 @@ if ($.isNode()) {
             $.isLogin = true;
             $.nickName = '';
             message = '';
-            await TotalBean();
+            //await TotalBean();
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             if (!$.isLogin) {
                 $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
