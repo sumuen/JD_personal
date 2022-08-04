@@ -1,11 +1,10 @@
 /*
 cron: "1"
-m_jd_follow_shop.js
+1 1 1 1 1 1 m_jd_follow_shop.js
 配置文件填写 export M_API_SIGN_URL="138.2.3.218:19840/sign"
  */
-console.log('把 export M_API_SIGN_URL="138.2.3.218:19840/sign" 保存到配置文件中')
 let mode = __dirname.includes('magic')
-const {Env} = mode ? require('../magic') : require('../magic')
+const {Env} = mode ? require('./magic') : require('./magic')
 const $ = new Env('M关注有礼');
 $.followShopArgv = process.env.M_FOLLOW_SHOP_ARGV
     ? process.env.M_FOLLOW_SHOP_ARGV

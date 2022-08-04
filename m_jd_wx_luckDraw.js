@@ -1,11 +1,7 @@
-/*
-cron: "1"
-m_jd_wx_luckDraw.js, tag=M幸运抽奖, enabled=true
-*/
-
+// cron: "1"
 //问题反馈:https://t.me/Wall_E_Channel
 let mode = __dirname.includes('magic')
-const {Env} = mode ? require('../magic') : require('../magic')
+const {Env} = mode ? require('./magic') : require('./magic')
 const $ = new Env('M幸运抽奖');
 $.activityUrl = process.env.M_WX_LUCK_DRAW_URL
     ? process.env.M_WX_LUCK_DRAW_URL
@@ -138,8 +134,8 @@ $.logic = async function () {
         $.canDrawTimes === 0 ? $.canDrawTimes = 1 : ''
         debugger
         let memberInfo = await $.api($.domain.includes('cjhy')
-            ? 'mc/new/brandCard/common/shopAndBrand/getOpenCardInfo'
-            : 'wxCommonInfo/getActMemberInfo',
+                ? 'mc/new/brandCard/common/shopAndBrand/getOpenCardInfo'
+                : 'wxCommonInfo/getActMemberInfo',
             $.domain.includes('cjhy')
                 ? `venderId=${$.venderId}&buyerPin=${$.Pin}&activityType=${$.activityType}`
                 :
@@ -162,8 +158,8 @@ $.logic = async function () {
 
         if ($.needFollow && !$.hasFollow) {
             let followShop = await $.api($.domain.includes('cjhy')
-                ? 'wxActionCommon/newFollowShop'
-                : 'wxActionCommon/followShop',
+                    ? 'wxActionCommon/newFollowShop'
+                    : 'wxActionCommon/followShop',
                 $.domain.includes('cjhy')
                     ? `venderId=${$.venderId}&activityId=${$.activityId}&buyerPin=${$.Pin}&activityType=${$.activityType}`
                     : `userId=${$.venderId}&activityId=${$.activityId}&buyerNick=${$.Pin}&activityType=${$.activityType}`);
@@ -228,5 +224,6 @@ $.after = async function () {
     $.msg.push(message)
     $.msg.push($.activityUrl);
 }
-$.run({whitelist: ['1-10'], wait: [3000, 5000]}).catch(
+$.run({whitelist: ['1-5'], wait: [3000, 5000]}).catch(
     reason => $.log(reason));
+
