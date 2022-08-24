@@ -1,37 +1,16 @@
 """
 const $ = new Env("星空代理签到");
-cron: 1
+cron: 10 00 * * *
 """
-import logging
-# 变量 export xingkong
+# 变量 export xingkong="ck"
 import os
 import re
-import sys
-import traceback
+from notify import send
 
 import requests
 
-xingkong = os.environ["xingkong"]
-
-logger = logging.getLogger(name=None)  # 创建一个日志对象
-logging.Formatter("%(message)s")  # 日志内容格式化
-logger.setLevel(logging.INFO)  # 设置日志等级
-logger.addHandler(logging.StreamHandler())  # 添加控制台日志
-
-
-def load_send() -> None:
-    logger.info("加载推送功能中...")
-    global send
-    send = None
-    cur_path = os.path.abspath(os.path.dirname(__file__))
-    sys.path.append(cur_path)
-    if os.path.exists(cur_path + "/notify.py"):
-        try:
-            from notify import send
-        except Exception:
-            send = None
-            logger.info(f"❌加载通知服务失败!!!\n{traceback.format_exc()}")
 try:
+    xingkong = os.environ["xingkong"]
     a1 = re.findall(r"(ASP\.NET_SessionId)=(\w+);?", xingkong)
     a2 = re.findall(r"(Hm_lvt_\w+)=(\d+),", xingkong)
     a3 = re.findall(r"(Hm_lpvt_\w+)=(\d+);?", xingkong)
@@ -64,9 +43,11 @@ try:
         'type': 'login',
     }
 
-    response = requests.post('http://www.xkdaili.com/tools/submit_ajax.ashx', params=params, cookies=cookies, headers=headers, data=data, verify=False)
-    logger.info("\n星空签到 ", response.json())
-    load_send()
+    response = requests.post('http://www.xkdaili.com/tools/submit_ajax.ashx', params=params, cookies=cookies,
+                             headers=headers, data=data, verify=False)
+    print("\n星空签到 ", response.json())
+    send("\n星空签到 ", f"{response.json()}")
 except Exception as e:
-    logger.info("\n星空签到失败,失败原因 ", e)
-    load_send()
+    print("\n星空签到失败,失败原因 ", str(e))
+    if str(e) == "list index out of range":
+        send("\n星空代理签到失败,失败原因 ", "填写CK不完整")
