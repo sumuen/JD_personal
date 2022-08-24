@@ -1,11 +1,10 @@
 """
 const $ = new Env("星空代理签到");
-星空代理自动签到,配合https://github.com/XgzK/IP_cistern项目代理脚本
-注册星空代理 http://www.xkdaili.com/?ic=4deqad9q 需要实名制
-邀请码: `4deqad9q`
 cron: 1 qd_xkdaili.py
 """
-
+# 星空代理自动签到,配合https://github.com/XgzK/IP_cistern项目代理脚本
+# 注册星空代理 http://www.xkdaili.com/?ic=4deqad9q 需要实名制
+# 邀请码: `4deqad9q`
 import requests
 
 cookies = {
