@@ -4,10 +4,23 @@ cron: 1
 """
 
 import os
+import re
+
 import requests
 
 xingkong = os.environ["xingkong"]
+
 try:
+    a1 = re.findall(r"(ASP\.NET_SessionId)=(.*?);", xingkong)
+    a2 = re.findall(r"(Hm_lvt_\w+)=(\d+),", xingkong)
+    a3 = re.findall(r"(Hm_lpvt_\w+)=(\d+);", xingkong)
+    a4 = re.findall(r"(dt_cookie.*?)=(DTcms=\d+)", xingkong)
+    cookies = {
+        a1[0][0]: a1[0][1],
+        a2[0][0]: a2[0][1],
+        a3[0][0]: a3[0][1],
+        a4[0][0]: a4[0][1],
+    }
     headers = {
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
@@ -30,7 +43,7 @@ try:
         'type': 'login',
     }
 
-    response = requests.post('http://www.xkdaili.com/tools/submit_ajax.ashx', params=params, cookies=xingkong, headers=headers, data=data, verify=False)
+    response = requests.post('http://www.xkdaili.com/tools/submit_ajax.ashx', params=params, cookies=cookies, headers=headers, data=data, verify=False)
     print(response.json())
 except Exception as e:
     print("没有获取到参数" + str(e))
