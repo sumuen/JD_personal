@@ -11,10 +11,10 @@ import requests
 
 try:
     xingkong = os.environ["xingkong"]
-    a1 = re.findall(r"(ASP\.NET_SessionId)=(\w+);?", xingkong)
-    a2 = re.findall(r"(Hm_lvt_\w+)=(\d+),", xingkong)
-    a3 = re.findall(r"(Hm_lpvt_\w+)=(\d+);?", xingkong)
-    a4 = re.findall(r"(dt_cookie.*?)=(DTcms=\d+);?", xingkong)
+    a1 = re.findall(r"(ASP\.NET_SessionId)=(\w+)[;|,]?", xingkong)
+    a2 = re.findall(r"(Hm_lvt_\w+)=(\d+)[;|,]?", xingkong)
+    a3 = re.findall(r"(Hm_lpvt_\w+)=(\d+)[;|,]?", xingkong)
+    a4 = re.findall(r"(dt_cookie.*?)=(DTcms=\d+)[;|,]?", xingkong)
     cookies = {
         a1[0][0]: a1[0][1],
         a2[0][0]: a2[0][1],
