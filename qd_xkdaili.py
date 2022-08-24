@@ -2,7 +2,7 @@
 const $ = new Env("星空代理签到");
 cron: 10 00 * * *
 """
-# 变量 export xingkong="ck"
+# 变量 export xingkong="账户1:密码&账户2:密码"
 import os
 import re
 from notify import send
@@ -11,16 +11,6 @@ import requests
 
 try:
     xingkong = os.environ["xingkong"]
-    a1 = re.findall(r"(ASP\.NET_SessionId)=(\w+)[;|,]?", xingkong)
-    a2 = re.findall(r"(Hm_lvt_\w+)=(\d+)[;|,]?", xingkong)
-    a3 = re.findall(r"(Hm_lpvt_\w+)=(\d+)[;|,]?", xingkong)
-    a4 = re.findall(r"(dt_cookie.*?)=(DTcms=\d+)[;|,]?", xingkong)
-    cookies = {
-        a1[0][0]: a1[0][1],
-        a2[0][0]: a2[0][1],
-        a3[0][0]: a3[0][1],
-        a4[0][0]: a4[0][1],
-    }
     headers = {
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
@@ -34,20 +24,46 @@ try:
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 Edg/103.0.1264.77',
         'X-Requested-With': 'XMLHttpRequest',
     }
-
+    # 用于拼接
+    st = ""
     params = {
         'action': 'user_receive_point',
     }
+    # 按照空格分隔多个账户
+    accounts = xingkong.split("&")
+    for i in accounts:
+        up = i.split(":")
+        data = {
+            "username": up[0],
+            "password": up[1],
+            "remember": 0
+        }
+        try:
+            aa = requests.post("http://www.xkdaili.com/tools/submit_ajax.ashx?action=user_login&site_id=1", headers=headers,
+                               data=data)
+            ck = aa.cookies
+            asp = re.findall(r"ASP\.NET_SessionId=(\w+)", str(ck))
+            dt = re.findall(r"dt_cookie_user_name_remember=(\w+=\w+)", str(ck))
+            cookies = {
+                "ASP.NET_SessionId": asp[0],
+                "dt_cookie_user_name_remember": dt[0]
+            }
 
-    data = {
-        'type': 'login',
-    }
+            data = {
+                'type': 'login',
+            }
 
-    response = requests.post('http://www.xkdaili.com/tools/submit_ajax.ashx', params=params, cookies=cookies,
-                             headers=headers, data=data, verify=False)
-    print("\n星空签到 ", response.json())
-    send("\n星空签到 ", f"{response.json()}")
+            response = requests.post('http://www.xkdaili.com/tools/submit_ajax.ashx', params=params, cookies=cookies,
+                                     headers=headers, data=data, verify=False)
+            txt = response.json()
+            print("\n星空签到 ", txt['msg'])
+            st += f"\n账户 {up[0]} 星空签到 {txt['msg']}"
+        except Exception as e:
+            print(f"\n账户 {up[0]} 星空签到异常 {str(e)}")
+            st += f"\n账户 {up[0]} 星空签到异常 {str(e)}"
+    # 执行完毕发送通知
+    send("\n星空签到 ", f"{st}")
 except Exception as e:
     print("\n星空签到失败,失败原因 ", str(e))
     if str(e) == "list index out of range":
-        send("\n星空代理签到失败,失败原因 ", "填写CK不完整")
+        send("\n星空代理签到失败,失败原因 ", f"{str(e)}")
