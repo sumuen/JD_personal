@@ -11,7 +11,6 @@ import time
 import urllib.parse
 
 import requests
-# py推送消息的
 # 原先的 print 函数和主线程的锁
 _print = print
 mutex = threading.Lock()
