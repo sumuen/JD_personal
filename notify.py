@@ -17,9 +17,11 @@ mutex = threading.Lock()
 
 
 # 定义新的 print 函数
+# 测试git
 def print(text, *args, **kw):
     """
     使输出有序进行，不出现多线程同一时间输出导致错乱的问题。
+    
     """
     with mutex:
         _print(text, *args, **kw)
