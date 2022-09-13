@@ -5,7 +5,7 @@ jd_fxyl_activityId  活动ID 必需
 其他变量：
 OWN_COOKIE_NUM  需要被助力的人数
 HELP_COOKIE_NUM 助力的人数
-1
+cron: 1
 */
 const $ = new Env("分享有礼");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
