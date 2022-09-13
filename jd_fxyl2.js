@@ -2,7 +2,7 @@
 环境变量
 ownCookieNum 需要助力数量，默认4个
 SHARE_ACTIVITY_ID活动id
-0 0 0 * 1 *
+1
 */
 const $ = new Env("小哩分享有礼");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
