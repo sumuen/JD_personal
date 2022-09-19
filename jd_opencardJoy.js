@@ -1,6 +1,6 @@
 /*
 joy通用开卡
-cron: 1
+cron: "1"
 Fix by HarbourJ
 TG: https://t.me/HarbourToulu
 变量：export jd_joyOpenId="xxxxxxxxxxxxxxxxxxxx"

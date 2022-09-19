@@ -11,14 +11,15 @@ export comm_tasknameList="京东工业品抽奖"
 ============Quantumultx===============
 [task_local]
 #JoyJd任务脚本
-cron "1" https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js, tag=JoyJd任务脚本, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+cron "1"
+https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js, tag=JoyJd任务脚本, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "5 2,18 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js,tag=JoyJd任务脚本
+cron "1" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js,tag=JoyJd任务脚本
 
 ===============Surge=================
-JoyJd任务脚本 = type=cron,cronexp="5 2,18 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js
+JoyJd任务脚本 = type=cron,cronexp="1",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js
 
 ============小火箭=========
 JoyJd任务脚本 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js, cronexpr="5 2,18 * * *", timeout=3600, enable=true
