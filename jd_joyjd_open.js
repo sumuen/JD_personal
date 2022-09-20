@@ -6,7 +6,7 @@ jd_joyjd_open通用ID任务，多个活动用@连接，任务连接https://jdjoy
 export comm_activityIDList="af2b3d56e22d43afa0c50622c45ca2a3"
 export comm_endTimeList="1639756800000"
 export comm_tasknameList="京东工业品抽奖"
-
+cron "1"
 即时任务，无需cron,短期或者长期请参考活动规则设置cron
 ============Quantumultx===============
 [task_local]
@@ -16,7 +16,8 @@ https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js, tag=JoyJd�
 
 ================Loon==============
 [Script]
-cron "1" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js,tag=JoyJd任务脚本
+cron "1"
+script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js,tag=JoyJd任务脚本
 
 ===============Surge=================
 JoyJd任务脚本 = type=cron,cronexp="1",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joyjd_open.js
