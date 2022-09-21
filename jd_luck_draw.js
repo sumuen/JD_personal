@@ -10,11 +10,11 @@
 
 只有在没有抽奖次数的情况下才会去做任务获取
 
-cron: 1
+cron:1 1 1 1 *
 ============Quantumultx===============
 [task_local]
 #店铺抽奖通用活动-加密
-1 jd_luck_draw.js, tag=店铺抽奖通用活动-加密, enabled=true
+1 1 1 1 * jd_luck_draw.js, tag=店铺抽奖通用活动-加密, enabled=true
 */
 
 const $ = new Env("店铺抽奖通用活动-加密");
