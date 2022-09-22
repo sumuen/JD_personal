@@ -64,7 +64,7 @@ $.logic = async function () {
     await DelShopFav()
 };
 $.run({wait: [300, 1000],whitelist: ['1-5']})
-    .catch(reason => $.log(reason))
+.catch(reason => $.log(reason))
 
 async function GiveShopGift() {
     let url = `https://wq.jd.com/fav_snsgift/GiveShopGift?venderId=${$.venderId}&activeId=${$.activeId}&giftId=${$.giftId}&_=${$.timestamp()}&sceneval=2&g_login_type=1&callback=jsonpCBKQ&g_tk=1292830178&g_ty=ls`
