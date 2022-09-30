@@ -122,14 +122,16 @@ async function getvenderId(token) {
             try {
                 if (err) {
                     console.log(`\n${$.name}: API查询请求失败 ‼️‼️`)
+                    console.log(`第` + num + `个店铺签到活动已失效\n失效店铺是` + token + `请管理员检测并删除\n`)
+                    message += `第` + num + `个店铺签到活动已失效\n失效店铺是` + token + `请管理员检测并删除\n`
                     $.logErr(err);
                 } else {
                     //console.log(data)
                     data = JSON.parse(/{(.*)}/g.exec(data)[0])
                     if (data.code == 402) {
                         vender = ''
-                        console.log(`第` + num + `个店铺签到活动已失效`)
-                        message += `第` + num + `个店铺签到活动已失效\n`
+                        console.log(`第` + num + `个店铺签到活动已失效\n失效店铺是` + token + `请管理员检测并删除\n`)
+                        message += `第` + num + `个店铺签到活动已失效\n失效店铺是` + token + `请管理员检测并删除\n`
                     } else {
                         vender = data.data.venderId
                     }
