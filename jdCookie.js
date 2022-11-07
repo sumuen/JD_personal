@@ -21,9 +21,7 @@ NOT_LZ = NOT_LZ.split('&')
 NOT_CJ = NOT_CJ.split('&')
 //此处填写京东账号cookie。
 let CookieJDs = [
-    "pt_key=AAJjXTVWADBcjiWyE0cp7cjlAjh61oVNL0b5Fy-dq9BNKJ-eBVN7hbFGxPFokmCNWZUr9bzK0cg; pt_pin=jd_5073d2f969050;",
-    "pt_key=AAJjXTY-ADAeDoxSZmCm6bY8dlcxaDJftcVGmFd-A6DJNfuDZtLuhLCxpge4sTMwzSUUZE-F7MM; pt_pin=jd_dAfcHRQqFEOO;"
-]
+    ]
 // 判断环境变量里面是否有京东ck
 if (process.env.JD_COOKIE) {
     if (process.env.JD_COOKIE.indexOf('&') > -1) {
