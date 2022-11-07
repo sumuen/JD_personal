@@ -21,7 +21,7 @@ NOT_LZ = NOT_LZ.split('&')
 NOT_CJ = NOT_CJ.split('&')
 //此处填写京东账号cookie。
 let CookieJDs = [
-    ]
+]
 // 判断环境变量里面是否有京东ck
 if (process.env.JD_COOKIE) {
     if (process.env.JD_COOKIE.indexOf('&') > -1) {
