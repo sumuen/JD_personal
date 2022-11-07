@@ -9,6 +9,9 @@
 ================================================================================
 
 此文件为Node.js专用。其他用户请忽略
+专门适配活动参数的
+export NOT_CJ="pt_pin1&pt_pin2" CJ开头黑名单
+export NOT_LZ="pt_pin1&pt_pin2" LZ开头黑名单
  */
 // 获取活动参数类型
 let NOT_TYPE = process.env.NOT_TYPE ? process.env.NOT_TYPE : '';
@@ -58,7 +61,6 @@ for (let i = 0; i < CookieJDs.length; i++) {
             continue
         }
     }
-    console.log(CookieJDs[i].match(/pt_pin=(.+?);/)[1])
     exports['CookieJD' + index] = CookieJDs[i].trim();
 }
 
