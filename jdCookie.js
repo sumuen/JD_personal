@@ -10,8 +10,16 @@
 
 此文件为Node.js专用。其他用户请忽略
  */
+// 获取活动参数类型
+let NOT_TYPE = process.env.NOT_TYPE ? process.env.NOT_TYPE : '';
+let NOT_CJ = process.env.NOT_CJ ? process.env.NOT_CJ : '';
+let NOT_LZ = process.env.NOT_LZ ? process.env.NOT_LZ : '';
+NOT_LZ = NOT_LZ.split('&')
+NOT_CJ = NOT_CJ.split('&')
 //此处填写京东账号cookie。
 let CookieJDs = [
+    "pt_key=AAJjXTVWADBcjiWyE0cp7cjlAjh61oVNL0b5Fy-dq9BNKJ-eBVN7hbFGxPFokmCNWZUr9bzK0cg; pt_pin=jd_5073d2f969050;",
+    "pt_key=AAJjXTY-ADAeDoxSZmCm6bY8dlcxaDJftcVGmFd-A6DJNfuDZtLuhLCxpge4sTMwzSUUZE-F7MM; pt_pin=jd_dAfcHRQqFEOO;"
 ]
 // 判断环境变量里面是否有京东ck
 if (process.env.JD_COOKIE) {
@@ -37,6 +45,20 @@ if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () =
 for (let i = 0; i < CookieJDs.length; i++) {
     if (!CookieJDs[i].match(/pt_pin=(.+?);/) || !CookieJDs[i].match(/pt_key=(.+?);/)) console.log(`\n提示:京东cookie 【${CookieJDs[i]}】填写不规范,可能会影响部分脚本正常使用。正确格式为: pt_key=xxx;pt_pin=xxx;（分号;不可少）\n`);
     const index = (i + 1 === 1) ? '' : (i + 1);
+    if (NOT_TYPE === 'lz') {
+        jd_ck = CookieJDs[i].match(/pt_pin=(.+?);/)[1]
+        if (NOT_LZ.indexOf(jd_ck) > -1) {
+            console.log(jd_ck + "在LZ黑名单中,跳过本次线报执行")
+            continue
+        }
+    } else if (NOT_TYPE === 'cj') {
+        jd_ck = CookieJDs[i].match(/pt_pin=(.+?);/)[1]
+        if (NOT_CJ.indexOf(jd_ck) > -1) {
+            console.log(jd_ck + "在CJ黑名单中,跳过本次线报执行")
+            continue
+        }
+    }
+    console.log(CookieJDs[i].match(/pt_pin=(.+?);/)[1])
     exports['CookieJD' + index] = CookieJDs[i].trim();
 }
 
