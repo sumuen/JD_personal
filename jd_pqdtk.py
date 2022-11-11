@@ -130,7 +130,6 @@ if __name__ == '__main__':
     su2 = 0
     for ck in getCk:
         print(f'现在执行签到天数的是CK{su2}')
-        msg += f"现在执行签到天数的是CK{su2}"
         for token in js.keys():
             res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'])
             # 结束本次循环
@@ -140,7 +139,6 @@ if __name__ == '__main__':
     su2 = 0
     for ck in getCk:
         print(f'现在获取签到天数的是CK{su2}')
-        msg += f"现在获取签到天数的是CK{su2}"
         su1 = 0
         for token in js.keys():
             su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'], [su1, su2])
@@ -149,6 +147,6 @@ if __name__ == '__main__':
                 print(f'CK{su2}连续获取两次零签到天数执行下一个CK')
                 break
         su2 += 1
-        title = "🗣消息提醒：店铺签到简化版"
-        msg = f"⏰{str(datetime.now())[:19]}\n" + msg
-        send(title, msg)
+    title = "🗣消息提醒：店铺签到简化版"
+    msg = f"⏰{str(datetime.now())[:19]}\n" + msg
+    send(title, msg)
