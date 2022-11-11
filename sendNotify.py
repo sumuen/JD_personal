@@ -525,7 +525,7 @@ def send(title: str, content: str) -> None:
     if not content:
         print(f"{title} 推送内容为空！")
         return
-    content += '\nBy: 通知文件借用船长库的 [https://github.com/HarbourJ/HarbourToulu]'
+    content += '\nBy: 通知文件借用船长库的'
 
     hitokoto = push_config.get("HITOKOTO")
 

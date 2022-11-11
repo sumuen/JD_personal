@@ -5,9 +5,11 @@ cron: 10 00 * * *
 # 变量 export xingkong="账户1:密码&账户2:密码"
 import os
 import re
-from notify import send
+from datetime import datetime
 
 import requests
+
+from sendNotify import send
 
 try:
     xingkong = os.environ["xingkong"]
@@ -25,7 +27,7 @@ try:
         'X-Requested-With': 'XMLHttpRequest',
     }
     # 用于拼接
-    st = ""
+    msg = ""
     params = {
         'action': 'user_receive_point',
     }
@@ -56,14 +58,18 @@ try:
             response = requests.post('http://www.xkdaili.com/tools/submit_ajax.ashx', params=params, cookies=cookies,
                                      headers=headers, data=data, verify=False)
             txt = response.json()
-            print("\n星空签到 ", txt['msg'])
-            st += f"\n账户 {up[0]} 星空签到 {txt['msg']}"
+            print("星空签到 ", txt['msg'])
+            msg += f"账户 {up[0]} 星空签到 {txt['msg']}\n"
         except Exception as e:
-            print(f"\n账户 {up[0]} 星空签到异常 {str(e)}")
-            st += f"\n账户 {up[0]} 星空签到异常 {str(e)}"
+            print(f"账户 {up[0]} 星空签到异常 {str(e)}")
+            msg += f"账户 {up[0]} 星空签到异常 {str(e)}\n"
     # 执行完毕发送通知
-    send("\n星空签到 ", f"{st}")
+    title = "🗣消息提醒：星空签到"
+    msg = f"⏰{str(datetime.now())[:19]}\n" + msg
+    send(title, msg)
 except Exception as e:
-    print("\n星空签到失败,失败原因 ", str(e))
+    print("星空签到失败,失败原因 ", str(e))
     if str(e) == "list index out of range":
-        send("\n星空代理签到失败,失败原因 ", f"{str(e)}")
+        title = "🗣消息提醒：星空签到"
+        msg = f"⏰{str(datetime.now())[:19]}\n" + f"星空代理签到失败,失败原因 {e}"
+        send(title, msg)
