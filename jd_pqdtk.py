@@ -55,7 +55,7 @@ def signCollectGift(cookie, token, venderId, activityId):
         pq_data = requests.get(url, headers=headers)
         # 筛选所有非200问题
         if pq_data.status_code != 200:
-            print(f'失败店铺店铺token值是: {token}\n失败状态码: {pq_data.status_code}')
+            print(f'失败token: : {token} 失败状态码: {pq_data.status_code}')
             return []
         codata = re.findall('"code":(\d+)', pq_data.text)
         if codata:
@@ -65,17 +65,17 @@ def signCollectGift(cookie, token, venderId, activityId):
             else:
                 codata1 = re.findall('"msg":"(.*?)",', pq_data.text)
                 if codata1:
-                    print(f'失败店铺店铺token1值是: {token}\n签到失败信息: {codata1[0]}')
+                    print(f'失败token: {token} 失败返回值: {codata1[0]}')
                     if codata1[0] == "用户达到签到上限":
                         return [-1]
                     return []
-                msg += f"失败店铺店铺token2值是: {token}\n签到失败返回值: {codata[0]}\n"
-                print(f'失败店铺店铺token2值是: {token}\n签到失败返回值: {codata[0]}')
+                msg += f"失败token: {token} 失败返回值: {codata[0]}\n"
+                print(f'失败token: {token} 失败返回值: {codata[0]}')
                 return []
         return []
     except Exception as e:
-        print(f'失败店铺店铺token值是: {token}\n签到异常: {e}')
-        msg += f'失败店铺店铺token值是: {token}\n签到异常: {e}\n'
+        print(f'失败token: {token} 签到异常: {e}')
+        msg += f'失败token: {token} 签到异常: {e}\n'
         return []
 
 
@@ -109,8 +109,8 @@ def taskUrl(cookie, token, venderId, activityId, maximum, su1: list):
         days = re.findall('"days":(\d+)', pq_data.text)[0]
         print(f'店铺 {token} 已经签到 {days} 天')
         if int(days) >= int(maximum) and su1[1] == 0:
-            print(f'已经达到最大签到天数请去 pqdtk.json 删除 {token} 那部分信息')
-            msg += f'已经达到最大签到天数请去 pqdtk.json 删除 {token} 那部分信息'
+            print(f'达到签到天数最大值请去 pqdtk.json 删除 {token} 那部分信息')
+            msg += f'达到签到天数最大值请去 pqdtk.json 删除 {token} 那部分信息'
         if int(days) == 0:
             return [-1]
         return [200]
@@ -129,8 +129,8 @@ if __name__ == '__main__':
         js = json.load(f)
     su2 = 0
     for ck in getCk:
-        print(f'==========现在执行签到天数的是CK{su2}=============')
-        msg += f"======现在执行签到天数的是CK{su2}========"
+        print(f'现在执行签到天数的是CK{su2}')
+        msg += f"现在执行签到天数的是CK{su2}"
         for token in js.keys():
             res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'])
             # 结束本次循环
@@ -139,14 +139,14 @@ if __name__ == '__main__':
         su2 += 1
     su2 = 0
     for ck in getCk:
-        print(f'==========现在获取签到天数的是CK{su2}=============')
-        msg += f"======现在获取签到天数的是CK{su2}========"
+        print(f'现在获取签到天数的是CK{su2}')
+        msg += f"现在获取签到天数的是CK{su2}"
         su1 = 0
         for token in js.keys():
             su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'], [su1, su2])
             su1 += 1 if su3 and su3[0] == -1 else su1
             if su3 and su1 > 2:
-                print(f'==========CK{su2}连续获取两次零签到天数执行下一个CK=============')
+                print(f'CK{su2}连续获取两次零签到天数执行下一个CK')
                 break
         su2 += 1
         title = "🗣消息提醒：店铺签到简化版"
