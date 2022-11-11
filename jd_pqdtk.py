@@ -139,10 +139,10 @@ if __name__ == '__main__':
         su2 += 1
     su2 = 0
     for ck in getCk:
+        print(f'==========现在获取签到天数的是CK{su2}=============')
+        msg += f"======现在获取签到天数的是CK{su2}========"
         su1 = 0
         for token in js.keys():
-            print(f'==========现在获取签到天数的是CK{su2}=============')
-            msg += f"======现在获取签到天数的是CK{su2}========"
             su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'], [su1, su2])
             su1 += 1 if su3 and su3[0] == -1 else su1
             if su3 and su1 > 2:
