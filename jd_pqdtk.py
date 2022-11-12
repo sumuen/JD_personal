@@ -30,7 +30,7 @@ except:
     sys.exit(3)
 msg = ''
 JD_API_HOST = 'https://api.m.jd.com/api?appid=interCenter_shopSign'
-
+lis = []
 
 def signCollectGift(cookie, token, venderId, activityId):
     """
@@ -65,12 +65,16 @@ def signCollectGift(cookie, token, venderId, activityId):
             else:
                 codata1 = re.findall('"msg":"(.*?)",', pq_data.text)
                 if codata1:
-                    print(f'失败token: {token} 失败返回值: {codata1[0]}')
+                    print(f'失败token1: {token} 失败返回值: {codata1[0]}')
                     if codata1[0] == "用户达到签到上限":
                         return [-1]
+                    elif codata1[0] == "当前不存在有效的活动!" or codata1[
+                        0] == "对不起，你已经参加过该活动啦，去看看别的吧！":
+                        js.pop(token)
+                        print(f'删除非正常店铺: {token}')
                     return []
-                msg += f"失败token: {token} 失败返回值: {codata[0]}\n"
-                print(f'失败token: {token} 失败返回值: {codata[0]}')
+                msg += f"失败token2: {token} 失败返回值: {codata[0]}\n"
+                print(f'失败token2: {token} 失败返回值: {codata[0]}')
                 return []
         return []
     except Exception as e:
@@ -109,8 +113,10 @@ def taskUrl(cookie, token, venderId, activityId, maximum, su1: list):
         days = re.findall('"days":(\d+)', pq_data.text)[0]
         print(f'店铺 {token} 已经签到 {days} 天')
         if int(days) >= int(maximum) and su1[1] == 0:
-            print(f'达到签到天数最大值请去 pqdtk.json 删除 {token} 那部分信息')
-            msg += f'达到签到天数最大值请去 pqdtk.json 删除 {token} 那部分信息'
+            print(f'删除非正常店铺: {token}')
+            msg += f'删除非正常店铺: {token}'
+            # 删除签到满的店铺签到
+            js.pop(token)
         if int(days) == 0:
             return [-1]
         return [200]
@@ -142,12 +148,15 @@ if __name__ == '__main__':
         su1 = 0
         for token in js.keys():
             su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'], [su1, su2])
-            if su3 and su3[0] >= 5:
+            if su3:
                 su1 += 1
                 if su1 > 5:
                     print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
                     break
         su2 += 1
+    # 把失败的删除,重新添加
+    with open(filename, mode='w', encoding='utf-8') as f:
+        json.dump(js, f, ensure_ascii=False)
     title = "🗣消息提醒：店铺签到简化版"
     msg = f"⏰{str(datetime.now())[:19]}\n" + msg
     send(title, msg)
