@@ -142,10 +142,11 @@ if __name__ == '__main__':
         su1 = 0
         for token in js.keys():
             su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'], [su1, su2])
-            su1 += 1 if su3 and su3[0] == -1 else su1
-            if su3 and su1 > 5:
-                print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
-                break
+            if su3 and su3[0] >= 5:
+                su1 += 1
+                if su1 > 5:
+                    print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
+                    break
         su2 += 1
     title = "🗣消息提醒：店铺签到简化版"
     msg = f"⏰{str(datetime.now())[:19]}\n" + msg
