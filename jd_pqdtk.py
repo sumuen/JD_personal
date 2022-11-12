@@ -117,6 +117,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, su1: list):
             msg += f'删除非正常店铺: {token}'
             # 删除签到满的店铺签到
             js.pop(token)
+        print()
         if int(days) == 0:
             return [-1]
         return [200]
@@ -148,7 +149,7 @@ if __name__ == '__main__':
         su1 = 0
         for token in js.keys():
             su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'], [su1, su2])
-            if su3:
+            if su3 and su3[0] == -1:
                 su1 += 1
                 if su1 > 5:
                     print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
