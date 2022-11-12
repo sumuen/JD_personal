@@ -3,7 +3,6 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Author: HarbourJ
 Date: 2022/11/11 12:00
 TG: https://t.me/InteIJ
 cron: 1
