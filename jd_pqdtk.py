@@ -67,8 +67,7 @@ def signCollectGift(cookie, token, venderId, activityId):
                     print(f'失败token1: {token} 失败返回值: {codata1[0]}')
                     if codata1[0] == "用户达到签到上限":
                         return [-1]
-                    elif codata1[0] == "当前不存在有效的活动!" or codata1[
-                        0] == "对不起，你已经参加过该活动啦，去看看别的吧！":
+                    elif codata1[0] == "当前不存在有效的活动!":
                         lis.append(token)
                         print(f'删除非正常店铺: {token}')
                     return []
