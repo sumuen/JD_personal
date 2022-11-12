@@ -69,7 +69,7 @@ def signCollectGift(cookie, token, venderId, activityId):
                         return [-1]
                     elif codata1[0] == "当前不存在有效的活动!" or codata1[
                         0] == "对不起，你已经参加过该活动啦，去看看别的吧！":
-                        js.pop(token)
+                        lis.append(token)
                         print(f'删除非正常店铺: {token}')
                     return []
                 msg += f"失败token2: {token} 失败返回值: {codata[0]}\n"
@@ -115,7 +115,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, su1: list):
             print(f'删除非正常店铺: {token}')
             msg += f'删除非正常店铺: {token}'
             # 删除签到满的店铺签到
-            js.pop(token)
+            lis.append(token)
         print()
         if int(days) == 0:
             return [-1]
@@ -154,6 +154,8 @@ if __name__ == '__main__':
                     print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
                     break
         su2 += 1
+    for i in lis:
+        js.pop(i)
     # 把失败的删除,重新添加
     with open(filename, mode='w', encoding='utf-8') as f:
         json.dump(js, f, ensure_ascii=False)
