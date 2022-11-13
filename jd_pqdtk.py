@@ -3,10 +3,11 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/11/13 21:00
+Date: 2022/11/13 23:00
 TG: https://t.me/InteIJ
-cron: 1
-new Env('店铺签到简化版');e
+cron: 0 0 * * *
+new Env('店铺签到简化版');
+店铺签到简化版是根据开源的js店铺签到优化而来,优化程序运行的时长，让你在更短的时间内完成签到任务
 """
 import json
 import os
@@ -138,6 +139,11 @@ if __name__ == '__main__':
     for ck in getCk:
         print(f'现在执行签到天数的是CK{su2}')
         for token in js.keys():
+            # 如果超过日期自动跳过
+            if int(time.time()) > js[token]['time']:
+                if su2 == 0:
+                    lis.append(token)
+                continue
             time.sleep(1)
             res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'], js[token]['typeId'])
             # 结束本次循环
@@ -149,6 +155,8 @@ if __name__ == '__main__':
         print(f'现在获取签到天数的是CK{su2}')
         su1 = 0
         for token in js.keys():
+            if int(time.time()) > js[token]['time']:
+                continue
             su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
                           js[token]['typeId'], [su1, su2])
             if su3 and su3[0] == -1:
