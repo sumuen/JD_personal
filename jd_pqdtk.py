@@ -3,10 +3,10 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/11/11 12:00
+Date: 2022/11/13 21:00
 TG: https://t.me/InteIJ
 cron: 1
-new Env('店铺签到简化版');
+new Env('店铺签到简化版');e
 """
 import json
 import os
@@ -31,7 +31,8 @@ msg = ''
 JD_API_HOST = 'https://api.m.jd.com/api?appid=interCenter_shopSign'
 lis = []
 
-def signCollectGift(cookie, token, venderId, activityId):
+
+def signCollectGift(cookie, token, venderId, activityId, typeId):
     """
     店铺签到
     :param cookie:
@@ -42,7 +43,7 @@ def signCollectGift(cookie, token, venderId, activityId):
     """
     global msg
     try:
-        url = f'{JD_API_HOST}&t={int(time.time())}&loginType=2&functionId=interact_center_shopSign_signCollectGift&body=' + '{"token":"' + f'{token}","venderId":{venderId},"activityId":{activityId},"type":2,"actionType":' + '7}&jsonp=jsonp1004'
+        url = f'{JD_API_HOST}&t={int(time.time())}&loginType=2&functionId=interact_center_shopSign_signCollectGift&body=' + '{"token":"' + f'{token}","venderId":{venderId},"activityId":{activityId},"type":{typeId},"actionType":' + '7}&jsonp=jsonp1004'
         headers = {
             "accept": "accept",
             "accept-encoding": "gzip, deflate",
@@ -81,7 +82,7 @@ def signCollectGift(cookie, token, venderId, activityId):
         return []
 
 
-def taskUrl(cookie, token, venderId, activityId, maximum, su1: list):
+def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
     """
     店铺获取签到信息
     :param cookie:
@@ -89,12 +90,13 @@ def taskUrl(cookie, token, venderId, activityId, maximum, su1: list):
     :param venderId:
     :param activityId:
     :param maximum: 最大签到天数
+    :param typeId:
     :param su1: [记录天,第几个CK]
     :return:
     """
     global msg
     try:
-        url = f'{JD_API_HOST}&t={int(time.time())}&loginType=2&functionId=interact_center_shopSign_getSignRecord&body=' + '{"token":"' + f'{token}","venderId":{venderId},"activityId":{activityId},"type":2' + '}&jsonp=jsonp1006'
+        url = f'{JD_API_HOST}&t={int(time.time())}&loginType=2&functionId=interact_center_shopSign_getSignRecord&body=' + '{"token":"' + f'{token}","venderId":{venderId},"activityId":{activityId},"type":{typeId}' + '}&jsonp=jsonp1006'
         headers = {
             "accept": "application/json",
             "accept-encoding": "gzip, deflate, br",
@@ -136,7 +138,8 @@ if __name__ == '__main__':
     for ck in getCk:
         print(f'现在执行签到天数的是CK{su2}')
         for token in js.keys():
-            res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'])
+            time.sleep(1)
+            res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'], js[token]['typeId'])
             # 结束本次循环
             if res and res[0] == -1:
                 break
@@ -146,7 +149,8 @@ if __name__ == '__main__':
         print(f'现在获取签到天数的是CK{su2}')
         su1 = 0
         for token in js.keys():
-            su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'], [su1, su2])
+            su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
+                          js[token]['typeId'], [su1, su2])
             if su3 and su3[0] == -1:
                 su1 += 1
                 if su1 > 5:
