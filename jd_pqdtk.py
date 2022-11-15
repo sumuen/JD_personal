@@ -19,15 +19,14 @@ from datetime import datetime
 import requests
 from urllib3 import HTTPSConnectionPool
 
-from USER_AGENTS import get_user_agent
-from sendNotify import send
-
 try:
     from jdCookie import get_cookies
+    from USER_AGENTS import get_user_agent
+    from sendNotify import send
 
     getCk = get_cookies()
 except:
-    print("请先下载依赖脚本，\njdCookie.py")
+    print("缺少文件可能缺少其中一个，jdCookie.py sendNotify.py USER_AGENTS.py")
     sys.exit(3)
 msg = ''
 JD_API_HOST = 'https://api.m.jd.com/api?appid=interCenter_shopSign'
