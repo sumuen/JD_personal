@@ -166,7 +166,7 @@ if __name__ == '__main__':
                     break
         su2 += 1
     for i in lis:
-        js.pop(i)
+        js.pop(i) if i in js else ""
     # 把失败的删除,重新添加
     with open(filename, mode='w', encoding='utf-8') as f:
         json.dump(js, f, ensure_ascii=False)
