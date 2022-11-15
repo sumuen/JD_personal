@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/11/13 23:00
+Date: 2022/11/15 10:00
 TG: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
@@ -17,6 +17,7 @@ import time
 from datetime import datetime
 
 import requests
+from urllib3 import HTTPSConnectionPool
 
 from USER_AGENTS import get_user_agent
 from sendNotify import send
@@ -53,7 +54,7 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
             "referer": f"https://h5.m.jd.com/babelDiy/Zeus/2PAAf74aG3D61qvfKUM5dxUssJQ9/index.html?token=${token}&sceneval=2&jxsid=16105853541009626903&cu=true&utm_source=kong&utm_medium=jingfen&utm_campaign=t_1001280291_&utm_term=fa3f8f38c56f44e2b4bfc2f37bce9713",
             "User-Agent": get_user_agent()
         }
-        pq_data = requests.get(url, headers=headers)
+        pq_data = requests.get(url, headers=headers, timeout=10)
         # 筛选所有非200问题
         if pq_data.status_code != 200:
             print(f'失败token: : {token} 失败状态码: {pq_data.status_code}')
@@ -76,6 +77,10 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
                 msg += f"失败token2: {token} 失败返回值: {codata[0]}\n"
                 print(f'失败token2: {token} 失败返回值: {codata[0]}')
                 return []
+        return []
+    except HTTPSConnectionPool as e:
+        print(f'失败token: {token} 签到网络异常: {e}')
+        msg += f'失败token: {token} 签到网络异常: {e}\n'
         return []
     except Exception as e:
         print(f'失败token: {token} 签到异常: {e}')
@@ -107,21 +112,25 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
             "User-Agent": get_user_agent()
         }
         # 店铺获取签到
-        pq_data = requests.get(url, headers=headers)
+        pq_data = requests.get(url, headers=headers, timeout=10)
         # 筛选所有非200问题
         if pq_data.status_code != 200:
             return []
         days = re.findall('"days":(\d+)', pq_data.text)[0]
         print(f'店铺 {token} 已经签到 {days} 天')
         if int(days) >= int(maximum) and su1[1] == 0:
-            print(f'删除非正常店铺: {token}')
-            msg += f'删除非正常店铺: {token}'
+            print(f'达到签到天数自动删除: {token}')
+            msg += f'达到签到天数自动删除: {token}'
             # 删除签到满的店铺签到
             lis.append(token)
         print()
         if int(days) == 0:
             return [-1]
         return [200]
+    except HTTPSConnectionPool as e:
+        print(f'店铺 {token} 获取签到信息网络异常: ', e)
+        msg += f'店铺 {token} 获取签到信息网络异常: {e}'
+        return []
     except Exception as e:
         print(f'店铺 {token} 获取签到信息异常: ', e)
         msg += f'店铺 {token} 获取签到信息异常: {e}'
