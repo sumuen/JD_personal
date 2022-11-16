@@ -26,8 +26,8 @@ try:
     getCk = get_cookies()
     if type(getCk) != list:
         getCk = []
-except:
-    print("缺少文件可能缺少其中一个，jdCookie.py sendNotify.py USER_AGENTS.py")
+except Exception as e:
+    print("缺少文件可能缺少其中一个，jdCookie.py sendNotify.py USER_AGENTS.py", e)
     sys.exit(3)
 msg = ''
 JD_API_HOST = 'https://api.m.jd.com/api?appid=interCenter_shopSign'
