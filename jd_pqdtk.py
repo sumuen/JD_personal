@@ -129,7 +129,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
 
 
 if __name__ == '__main__':
-    filename = 'new.json'
+    filename = 'pqdtk.json'
     if os.path.exists(filename) is False:
         print('没有检测到同目录下有pqdtk.json存在')
         sys.exit(3)
