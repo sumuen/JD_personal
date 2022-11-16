@@ -24,6 +24,8 @@ try:
     from sendNotify import send
 
     getCk = get_cookies()
+    if type(getCk) != list:
+        getCk = []
 except:
     print("缺少文件可能缺少其中一个，jdCookie.py sendNotify.py USER_AGENTS.py")
     sys.exit(3)
@@ -127,7 +129,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
 
 
 if __name__ == '__main__':
-    filename = 'pqdtk.json'
+    filename = 'new.json'
     if os.path.exists(filename) is False:
         print('没有检测到同目录下有pqdtk.json存在')
         sys.exit(3)
