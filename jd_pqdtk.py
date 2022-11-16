@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/11/15 10:00
+Date: 2022/11/16 08:00
 TG: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
@@ -17,7 +17,6 @@ import time
 from datetime import datetime
 
 import requests
-from urllib3 import HTTPSConnectionPool
 
 try:
     from jdCookie import get_cookies
@@ -77,10 +76,6 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
                 print(f'失败token2: {token} 失败返回值: {codata[0]}')
                 return []
         return []
-    except HTTPSConnectionPool as e:
-        print(f'失败token: {token} 签到网络异常: {e}')
-        msg += f'失败token: {token} 签到网络异常: {e}\n'
-        return []
     except Exception as e:
         print(f'失败token: {token} 签到异常: {e}')
         msg += f'失败token: {token} 签到异常: {e}\n'
@@ -122,14 +117,9 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
             msg += f'达到签到天数自动删除: {token}'
             # 删除签到满的店铺签到
             lis.append(token)
-        print()
         if int(days) == 0:
             return [-1]
         return [200]
-    except HTTPSConnectionPool as e:
-        print(f'店铺 {token} 获取签到信息网络异常: ', e)
-        msg += f'店铺 {token} 获取签到信息网络异常: {e}'
-        return []
     except Exception as e:
         print(f'店铺 {token} 获取签到信息异常: ', e)
         msg += f'店铺 {token} 获取签到信息异常: {e}'
@@ -147,34 +137,43 @@ if __name__ == '__main__':
     for ck in getCk:
         print(f'现在执行签到天数的是CK{su2}')
         for token in js.keys():
-            # 如果超过日期自动跳过
-            if int(time.time()) > js[token]['time']:
-                if su2 == 0:
-                    lis.append(token)
-                continue
-            time.sleep(1)
-            res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'], js[token]['typeId'])
-            # 结束本次循环
-            if res and res[0] == -1:
-                break
+            try:
+                # 如果超过日期自动跳过
+                if int(time.time()) > js[token]['time']:
+                    if su2 == 0:
+                        lis.append(token)
+                    continue
+                res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'],
+                                      js[token]['typeId'])
+                # 结束本次循环
+                if res and res[0] == -1:
+                    break
+            except:
+                pass
         su2 += 1
     su2 = 0
     for ck in getCk:
         print(f'现在获取签到天数的是CK{su2}')
         su1 = 0
         for token in js.keys():
-            if int(time.time()) > js[token]['time']:
-                continue
-            su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
-                          js[token]['typeId'], [su1, su2])
-            if su3 and su3[0] == -1:
-                su1 += 1
-                if su1 > 5:
-                    print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
-                    break
+            try:
+                if int(time.time()) > js[token]['time']:
+                    continue
+                su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
+                              js[token]['typeId'], [su1, su2])
+                if su3 and su3[0] == -1:
+                    su1 += 1
+                    if su1 > 5:
+                        print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
+                        break
+            except:
+                pass
         su2 += 1
     for i in lis:
-        js.pop(i) if i in js else ""
+        try:
+            js.pop(i) if i in js else ""
+        except:
+            pass
     # 把失败的删除,重新添加
     with open(filename, mode='w', encoding='utf-8') as f:
         json.dump(js, f, ensure_ascii=False)
