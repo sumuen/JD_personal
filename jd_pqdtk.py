@@ -80,7 +80,6 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
         return []
     except Exception as e:
         print(f'失败token: {token} 签到异常: {e}')
-        msg += f'失败token: {token} 签到异常: {e}\n'
         return []
 
 
@@ -124,7 +123,6 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
         return [200]
     except Exception as e:
         print(f'店铺 {token} 获取签到信息异常: ', e)
-        msg += f'店铺 {token} 获取签到信息异常: {e}'
         return []
 
 
