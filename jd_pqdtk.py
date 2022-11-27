@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/11/27 13:10
+Date: 2022/11/27 13:50
 TG: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
@@ -95,7 +95,7 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
         return []
 
 
-def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
+def taskUrl(cookie, token, venderId, activityId, maximum, typeId):
     """
     店铺获取签到信息
     :param cookie:
@@ -104,7 +104,6 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
     :param activityId:
     :param maximum: 最大签到天数
     :param typeId:
-    :param su1: [记录天,第几个CK]
     :return: []发生未知问题 [200] 签到成功 [-1] 记录签到零天 [-2] 需要重试
     """
     global msg
@@ -125,7 +124,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
             return []
         days = re.findall('"days":(\d+)', pq_data.text)[0]
         print(f'店铺 {token} 已经签到 {days} 天')
-        if int(days) >= int(maximum) and su1[1] == 0:
+        if int(days) >= int(maximum):
             print(f'达到签到天数自动删除: {token}')
             msg += f'达到签到天数自动删除: {token}'
             # 删除签到满的店铺签到
@@ -166,10 +165,10 @@ def fo(cookie, token, venderId, activityId, typeId):
             return res
 
 
-def fotask(cookie, token, venderId, activityId, maximum, typeId, su1: list):
+def fotask(cookie, token, venderId, activityId, maximum, typeId):
     aa = 0
     while True:
-        ta = taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1)
+        ta = taskUrl(cookie, token, venderId, activityId, maximum, typeId)
         if aa == 3:
             return ta
         if ta and ta[0] == -1:
@@ -208,16 +207,16 @@ if __name__ == '__main__':
     su2 = 0
     for ck in getCk:
         print(f'现在获取签到天数的是CK{su2}')
-        su1 = 0
+        su = 0
         for token in js.keys():
             try:
                 if int(time.time()) > js[token]['time']:
                     continue
                 su3 = fotask(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
-                             js[token]['typeId'], [su1, su2])
+                             js[token]['typeId'])
                 if su3 and su3[0] == -1:
-                    su1 += 1
-                    if su1 > 5:
+                    su += 1
+                    if su > 5:
                         print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
                         break
             except:
