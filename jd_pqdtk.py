@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/11/16 08:00
+Date: 2022/11/27 13:10
 TG: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
