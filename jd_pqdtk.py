@@ -171,13 +171,13 @@ def fotask(cookie, token, venderId, activityId, maximum, typeId, su1: list):
     while True:
         ta = taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1)
         if aa == 3:
-            return res
+            return ta
         if ta and ta[0] == -1:
             return ta
         elif ta and ta[0] == -2:
             aa += 1
         else:
-            return res
+            return ta
 
 
 if __name__ == '__main__':
