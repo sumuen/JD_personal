@@ -17,6 +17,9 @@ import time
 from datetime import datetime
 
 import requests
+from requests.exceptions import ProxyError
+from urllib3 import HTTPSConnectionPool
+from urllib3.exceptions import MaxRetryError
 
 try:
     from jdCookie import get_cookies
@@ -41,7 +44,7 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
     :param token:
     :param venderId:
     :param activityId:
-    :return:
+    :return: []发生未知问题 [200] 签到成功 [-1] 签到上限 [-2] 需要重试
     """
     global msg
     try:
@@ -78,6 +81,15 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
                 print(f'失败token2: {token} 失败返回值: {codata[0]}')
                 return []
         return []
+    except ProxyError:
+        print(f"店铺: {token} 发生 ProxyError 代理异常,进行重试")
+        return [-2]
+    except HTTPSConnectionPool:
+        print(f"店铺: {token} 发生 HTTPSConnectionPool 异常,进行重试")
+        return [-2]
+    except MaxRetryError:
+        print(f"店铺: {token} 发生 MaxRetryError 最大重试次数异常,进行重试")
+        return [-2]
     except Exception as e:
         print(f'失败token: {token} 签到异常: {e}')
         return []
@@ -93,7 +105,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
     :param maximum: 最大签到天数
     :param typeId:
     :param su1: [记录天,第几个CK]
-    :return:
+    :return: []发生未知问题 [200] 签到成功 [-1] 记录签到零天 [-2] 需要重试
     """
     global msg
     try:
@@ -121,9 +133,51 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1: list):
         if int(days) == 0:
             return [-1]
         return [200]
+    except ProxyError:
+        print(f"店铺: {token} 发生 ProxyError 代理异常,进行重试")
+        return [-2]
+    except HTTPSConnectionPool:
+        print(f"店铺: {token} 发生 HTTPSConnectionPool 异常,进行重试")
+        return [-2]
+    except MaxRetryError:
+        print(f"店铺: {token} 发生 MaxRetryError 最大重试次数异常,进行重试")
+        return [-2]
     except Exception as e:
         print(f'店铺 {token} 获取签到信息异常: ', e)
         return []
+
+
+def fo(cookie, token, venderId, activityId, typeId):
+    """
+    解决一些异常的
+    :return:
+    """
+    aa = 0
+    while True:
+        res = signCollectGift(cookie, token, venderId, activityId, typeId)
+        if aa == 3:
+            return res
+        # 结束本次循环
+        if res and res[0] == -1:
+            return res
+        elif res and res[0] == -2:
+            aa += 1
+        else:
+            return res
+
+
+def fotask(cookie, token, venderId, activityId, maximum, typeId, su1: list):
+    aa = 0
+    while True:
+        ta = taskUrl(cookie, token, venderId, activityId, maximum, typeId, su1)
+        if aa == 3:
+            return res
+        if ta and ta[0] == -1:
+            return ta
+        elif ta and ta[0] == -2:
+            aa += 1
+        else:
+            return res
 
 
 if __name__ == '__main__':
@@ -143,8 +197,8 @@ if __name__ == '__main__':
                     if su2 == 0:
                         lis.append(token)
                     continue
-                res = signCollectGift(ck, str(token), js[token]['venderId'], js[token]['activityId'],
-                                      js[token]['typeId'])
+                res = fo(ck, str(token), js[token]['venderId'], js[token]['activityId'],
+                         js[token]['typeId'])
                 # 结束本次循环
                 if res and res[0] == -1:
                     break
@@ -159,8 +213,8 @@ if __name__ == '__main__':
             try:
                 if int(time.time()) > js[token]['time']:
                     continue
-                su3 = taskUrl(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
-                              js[token]['typeId'], [su1, su2])
+                su3 = fotask(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
+                             js[token]['typeId'], [su1, su2])
                 if su3 and su3[0] == -1:
                     su1 += 1
                     if su1 > 5:
@@ -176,7 +230,7 @@ if __name__ == '__main__':
             pass
     # 把失败的删除,重新添加
     with open(filename, mode='w', encoding='utf-8') as f:
-        json.dump(js, f, ensure_ascii=False)
+        json.dump(js, f, ensure_ascii=False, indent=4, sort_keys=True)
     title = "🗣消息提醒：店铺签到简化版"
     msg = f"⏰{str(datetime.now())[:19]}\n" + msg
     send(title, msg)
