@@ -130,7 +130,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
             msg += f'达到签到天数自动删除: {token}\n'
             # 删除签到满的店铺签到
             lis.append(token)
-        elif days < 2 and int(time.time()) + (86164 * maximum) < maxtime:
+        elif days < 2 and int(time.time()) + (86164 * maximum) > maxtime:
             print(f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺')
             msg += f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺\n'
             lis.append(token)
