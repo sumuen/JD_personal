@@ -131,8 +131,8 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
             # 删除签到满的店铺签到
             lis.append(token)
         elif int(days) < 2 and int(time.time()) + (86164 * int(maximum)) > maxtime:
-            print(f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺')
-            msg += f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺\n'
+            print(f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动删除本店铺')
+            msg += f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动删除本店铺\n'
             lis.append(token)
         if int(days) == 0:
             return [-1]
@@ -219,7 +219,6 @@ if __name__ == '__main__':
                     continue
                 su3 = fotask(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
                              js[token]['typeId'], js[token]['time'])
-                print(su3)
                 if su3 and su3[0] == -1:
                     su += 1
                     if su > 5:
