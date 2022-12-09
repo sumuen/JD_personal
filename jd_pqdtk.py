@@ -130,7 +130,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
             msg += f'达到签到天数自动删除: {token}\n'
             # 删除签到满的店铺签到
             lis.append(token)
-        elif days < 2 and int(time.time()) + (86164 * maximum) > maxtime:
+        elif int(days) < 2 and int(time.time()) + (86164 * int(maximum)) > maxtime:
             print(f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺')
             msg += f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺\n'
             lis.append(token)
@@ -219,13 +219,14 @@ if __name__ == '__main__':
                     continue
                 su3 = fotask(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
                              js[token]['typeId'], js[token]['time'])
+                print(su3)
                 if su3 and su3[0] == -1:
                     su += 1
                     if su > 5:
                         print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
                         break
-            except:
-                pass
+            except Exception as e:
+                print(e)
         su2 += 1
     for i in lis:
         try:
