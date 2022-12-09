@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/12/10 02:50
+Date: 2022/12/10 03:50
 TG: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
@@ -121,7 +121,14 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
         # 店铺获取签到
         pq_data = requests.get(url, headers=headers, timeout=10)
         # 筛选所有非200问题
-        if pq_data.status_code != 200:
+        if pq_data.status_code == 403:
+            print("触发403异常停止一分钟")
+            time.sleep(60)
+            return []
+        elif pq_data.status_code != 200:
+            print(f"触发状态码 {pq_data.status_code} 将删除店铺 {token}")
+            msg += f"触发状态码 {pq_data.status_code} 将删除店铺 {token}\n"
+            lis.append(token)
             return []
         days = re.findall('"days":(\d+)', pq_data.text)[0]
         print(f'店铺 {token} 已经签到 {days} 天')
