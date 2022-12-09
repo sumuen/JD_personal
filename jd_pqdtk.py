@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/11/27 13:50
+Date: 2022/12/10 02:50
 TG: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
@@ -95,7 +95,7 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
         return []
 
 
-def taskUrl(cookie, token, venderId, activityId, maximum, typeId):
+def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
     """
     店铺获取签到信息
     :param cookie:
@@ -104,6 +104,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId):
     :param activityId:
     :param maximum: 最大签到天数
     :param typeId:
+    :param maxtime: 最大签到天数的秒
     :return: []发生未知问题 [200] 签到成功 [-1] 记录签到零天 [-2] 需要重试
     """
     global msg
@@ -126,8 +127,12 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId):
         print(f'店铺 {token} 已经签到 {days} 天')
         if int(days) >= int(maximum):
             print(f'达到签到天数自动删除: {token}')
-            msg += f'达到签到天数自动删除: {token}'
+            msg += f'达到签到天数自动删除: {token}\n'
             # 删除签到满的店铺签到
+            lis.append(token)
+        elif days < 2 and int(time.time()) + (86164 * maximum) < maxtime:
+            print(f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺')
+            msg += f'检测到店铺 {token} 现在签到无法达到最大签到天数将自动本店铺\n'
             lis.append(token)
         if int(days) == 0:
             return [-1]
@@ -165,10 +170,10 @@ def fo(cookie, token, venderId, activityId, typeId):
             return res
 
 
-def fotask(cookie, token, venderId, activityId, maximum, typeId):
+def fotask(cookie, token, venderId, activityId, maximum, typeId, maxtime):
     aa = 0
     while True:
-        ta = taskUrl(cookie, token, venderId, activityId, maximum, typeId)
+        ta = taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime)
         if aa == 3:
             return ta
         if ta and ta[0] == -1:
@@ -213,7 +218,7 @@ if __name__ == '__main__':
                 if int(time.time()) > js[token]['time']:
                     continue
                 su3 = fotask(ck, token, js[token]['venderId'], js[token]['activityId'], js[token]['maximum'],
-                             js[token]['typeId'])
+                             js[token]['typeId'], js[token]['time'])
                 if su3 and su3[0] == -1:
                     su += 1
                     if su > 5:
