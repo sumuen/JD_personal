@@ -4,7 +4,8 @@
 """
 File: jd_pqdtk.py(店铺签到简化版)
 Date: 2022/12/10 13:13
-TG: https://t.me/InteIJ
+Channel: https://t.me/InteTU
+Group: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
 店铺签到简化版是根据开源的js店铺签到优化而来,优化程序运行的时长，让你在更短的时间内完成签到任务
