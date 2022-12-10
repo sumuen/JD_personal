@@ -3,11 +3,12 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/12/10 03:50
+Date: 2022/12/10 13:13
 TG: https://t.me/InteIJ
 cron: 0 0 * * *
 new Env('店铺签到简化版');
 店铺签到简化版是根据开源的js店铺签到优化而来,优化程序运行的时长，让你在更短的时间内完成签到任务
+代理 export proxies="协议://IP:端口"
 """
 import json
 import os
@@ -35,6 +36,7 @@ except Exception as e:
 msg = ''
 JD_API_HOST = 'https://api.m.jd.com/api?appid=interCenter_shopSign'
 lis = []
+proxies = os.environ.get("proxies") if os.environ.get("proxies") else None
 
 
 def signCollectGift(cookie, token, venderId, activityId, typeId):
@@ -57,7 +59,7 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
             "referer": f"https://h5.m.jd.com/babelDiy/Zeus/2PAAf74aG3D61qvfKUM5dxUssJQ9/index.html?token=${token}&sceneval=2&jxsid=16105853541009626903&cu=true&utm_source=kong&utm_medium=jingfen&utm_campaign=t_1001280291_&utm_term=fa3f8f38c56f44e2b4bfc2f37bce9713",
             "User-Agent": get_user_agent()
         }
-        pq_data = requests.get(url, headers=headers, timeout=10)
+        pq_data = requests.get(url, headers=headers, timeout=10, proxies={"https": proxies})
         # 筛选所有非200问题
         if pq_data.status_code != 200:
             print(f'失败token: : {token} 失败状态码: {pq_data.status_code}')
@@ -119,7 +121,7 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
             "User-Agent": get_user_agent()
         }
         # 店铺获取签到
-        pq_data = requests.get(url, headers=headers, timeout=10)
+        pq_data = requests.get(url, headers=headers, timeout=10, proxies={"https": proxies})
         # 筛选所有非200问题
         if pq_data.status_code == 403:
             print("触发403异常停止一分钟")
