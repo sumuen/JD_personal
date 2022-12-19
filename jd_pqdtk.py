@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2022/12/10 13:13
+Date: 2022/12/19 23:17
 Channel: https://t.me/InteTU
 Group: https://t.me/InteIJ
 cron: 0 0 * * *
@@ -21,7 +21,6 @@ from datetime import datetime
 import requests
 from requests.exceptions import ProxyError
 from urllib3 import HTTPSConnectionPool
-from urllib3.exceptions import MaxRetryError
 
 try:
     from jdCookie import get_cookies
@@ -90,9 +89,6 @@ def signCollectGift(cookie, token, venderId, activityId, typeId):
     except HTTPSConnectionPool:
         print(f"店铺: {token} 发生 HTTPSConnectionPool 异常,进行重试")
         return [-2]
-    except MaxRetryError:
-        print(f"店铺: {token} 发生 MaxRetryError 最大重试次数异常,进行重试")
-        return [-2]
     except Exception as e:
         print(f'失败token: {token} 签到异常: {e}')
         return []
@@ -152,9 +148,6 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
         return [-2]
     except HTTPSConnectionPool:
         print(f"店铺: {token} 发生 HTTPSConnectionPool 异常,进行重试")
-        return [-2]
-    except MaxRetryError:
-        print(f"店铺: {token} 发生 MaxRetryError 最大重试次数异常,进行重试")
         return [-2]
     except Exception as e:
         print(f'店铺 {token} 获取签到信息异常: ', e)
