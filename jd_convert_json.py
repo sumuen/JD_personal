@@ -231,7 +231,7 @@ def forCK(token: list):
 
 
 if __name__ == '__main__':
-    filename = 'new.json'
+    filename = 'pqdtk.json'
     if os.environ.get("ShopToken"):
         ShopToken = os.environ.get("ShopToken")
     else:
