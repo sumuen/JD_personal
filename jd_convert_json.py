@@ -231,7 +231,7 @@ def forCK(token: list):
 
 
 if __name__ == '__main__':
-    filename = 'pqdtk.json'
+    filename = 'new.json'
     if os.environ.get("ShopToken"):
         ShopToken = os.environ.get("ShopToken")
     else:
@@ -252,7 +252,7 @@ if __name__ == '__main__':
         sys.exit(3)
     forCK(list(ShopToken.split('&')))
     for i in range(len(data)):
-        if int(time.time()) + (86164 * int(data[i][5])) > data[i][8]:
+        if int(time.time()) + (86164 * (int(data[i][5]) - 1)) > data[i][8]:
             print(f"店铺 {data[i][0]} 无法达到最大签到天跳过添加")
             continue
         js.setdefault(data[i][0], {
