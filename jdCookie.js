@@ -8,20 +8,30 @@
 魔改作者：风之凌殇
 ================================================================================
 
-此文件为Node.js专用。其他用户请忽略
+下面是专门适配代理的
+export PASS_SCRIPT="jd_fruit_task.js&jd_wsdlb.js"
+如果代理添加28行PASS_SCRIPT就是白名单，如果代理添加到30行PASS_SCRIPT为黑名单
+
 专门适配活动参数的
 export NOT_CJ="pt_pin1&pt_pin2" CJ开头黑名单
 export NOT_LZ="pt_pin1&pt_pin2" LZ开头黑名单
  */
-// 获取活动参数类型
+// 代理获取执行脚本名称的
+let PASS_SCRIPT = process.env.PASS_SCRIPT ? process.env.PASS_SCRIPT : '';
+// 获取活动参数类型, https://github.com/XgzK/QL_variable 专用
 let NOT_TYPE = process.env.NOT_TYPE ? process.env.NOT_TYPE : '';
 let NOT_CJ = process.env.NOT_CJ ? process.env.NOT_CJ : '';
 let NOT_LZ = process.env.NOT_LZ ? process.env.NOT_LZ : '';
-NOT_LZ = NOT_LZ.split('&')
-NOT_CJ = NOT_CJ.split('&')
+NOT_LZ = NOT_LZ.split('&');
+NOT_CJ = NOT_CJ.split('&');
+
+if (PASS_SCRIPT.split('&').indexOf(process.argv[1].split('/').reverse()[0]) !== -1 || NOT_TYPE) {
+    console.log("这里可以填写代理 PASS_SCRIPT为白名单");
+} else {
+    console.log("这里也可以填写代理 PASS_SCRIPT 为黑名单");
+}
 //此处填写京东账号cookie。
-let CookieJDs = [
-]
+let CookieJDs = []
 // 判断环境变量里面是否有京东ck
 if (process.env.JD_COOKIE) {
     if (process.env.JD_COOKIE.indexOf('&') > -1) {
