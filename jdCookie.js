@@ -11,7 +11,7 @@ export JK_ALL_PROXY="http://IP:端口";
 
 定时任务 BAN_TIMING
 export BAN_TIMING="0&1&2";
-时间时0-23 如果问为什么没有24 那就别玩了，添加的时间都不执行代理
+时间0-23 如果问为什么没有24 那就别玩了，添加的时间都不执行代理
 
 脚本黑白名单 PASS_SCRIPT
 export PASS_SCRIPT="jd_fruit_task.js&jd_wsdlb.js";
@@ -168,5 +168,5 @@ let envName = process.env.ShareCodeEnvName
 if (nameConfig && envName) {
     SetShareCodesEnv(nameConfig, envName)
 } else {
-    console.debug(`faker 友情提示：您的脚本正常运行中`)
+    console.debug(`InteIJ群 友情提示：您的脚本正常运行中，jdCookie.js属于私人定制版,不放心请使用各大库的jdCookie.js`)
 }
