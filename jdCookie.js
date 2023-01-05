@@ -109,6 +109,14 @@ if (NOT_TYPE) {
         }
         exports['CookieJD' + index] = CookieJDs[i].trim();
     }
+} else if (process.env.JD_COOKIE) {
+    if (process.env.JD_COOKIE.indexOf('&') > -1) {
+        CookieJDs = process.env.JD_COOKIE.split('&');
+    } else if (process.env.JD_COOKIE.indexOf('\n') > -1) {
+        CookieJDs = process.env.JD_COOKIE.split('\n');
+    } else {
+        CookieJDs = [process.env.JD_COOKIE];
+    }
 }
 
 // 以下为注入互助码环境变量（仅nodejs内起效）的代码
