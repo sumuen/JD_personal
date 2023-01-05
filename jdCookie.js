@@ -1,34 +1,70 @@
 /*
 ================================================================================
 魔改自 https://github.com/shufflewzc/faker2/blob/main/jdCookie.js
-修改内容：与task_before.sh配合，由task_before.sh设置要设置要做互助的活动的 ShareCodeConfigName 和 ShareCodeEnvName 环境变量，
-        然后在这里实际解析/ql/log/.ShareCode中该活动对应的配置信息（由code.sh生成和维护），注入到nodejs的环境变量中
-修改原因：原先的task_before.sh直接将互助信息注入到shell的env中，在ck超过45以上时，互助码环境变量过大会导致调用一些系统命令
-        （如date/cat）时报 Argument list too long，而在node中修改环境变量不会受这个限制，也不会影响外部shell环境，确保脚本可以正常运行
-魔改作者：风之凌殇
+修改内容: 适配代理和活动项目的个人定制版本，如果执行报错nodejs依赖添加 global-agent
+修改原因: 适应群内项目
+所属组织：InteIJ群
 ================================================================================
+添加代理变量 JK_ALL_PROXY
+export JK_ALL_PROXY="http://IP:端口";
+脚本黑白名单
 
-下面是专门适配代理的
-export PASS_SCRIPT="jd_fruit_task.js&jd_wsdlb.js"
-如果代理添加28行PASS_SCRIPT就是白名单，如果代理添加到30行PASS_SCRIPT为黑名单
+定时任务 BAN_TIMING
+export BAN_TIMING="0&1&2";
+时间时0-23 如果问为什么没有24 那就别玩了，添加的时间都不执行代理
+
+脚本黑白名单 PASS_SCRIPT
+export PASS_SCRIPT="jd_fruit_task.js&jd_wsdlb.js";
+如果代理使用白名单，就把63 64行删了, 如果使用黑名单就把48 49 行删了，默认添加都走代理
+bootstrap();
+GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
 
 专门适配活动参数的
 export NOT_CJ="pt_pin1&pt_pin2" CJ开头黑名单
 export NOT_LZ="pt_pin1&pt_pin2" LZ开头黑名单
  */
-// 代理获取执行脚本名称的
-let PASS_SCRIPT = process.env.PASS_SCRIPT ? process.env.PASS_SCRIPT : '';
+const {bootstrap} = require("global-agent");
+// 代理api的变量
+let JK_ALL_PROXY = process.env.JK_ALL_PROXY ? process.env.JK_ALL_PROXY : '';
+// 定时任务黑名单
+let BAN_TIMING = process.env.BAN_TIMING ? process.env.BAN_TIMING : '';
+
 // 获取活动参数类型, https://github.com/XgzK/QL_variable 专用
 let NOT_TYPE = process.env.NOT_TYPE ? process.env.NOT_TYPE : '';
-let NOT_CJ = process.env.NOT_CJ ? process.env.NOT_CJ : '';
-let NOT_LZ = process.env.NOT_LZ ? process.env.NOT_LZ : '';
-NOT_LZ = NOT_LZ.split('&');
-NOT_CJ = NOT_CJ.split('&');
 
-if (PASS_SCRIPT.split('&').indexOf(process.argv[1].split('/').reverse()[0]) !== -1 || NOT_TYPE) {
-    console.log("这里可以填写代理 PASS_SCRIPT为白名单");
+const White_date = new Date();
+let NOT_CJ = [];
+let NOT_LZ = [];
+
+let hours_ti = White_date.getHours();
+// 定时任务,默认填写的为黑名单时间
+if (BAN_TIMING.split('&').indexOf(String(hours_ti)) > -1) {
+    console.log(`检测到 ${hours_ti} 时在 BAN_TIMING 变量中执行此输出`);
 } else {
-    console.log("这里也可以填写代理 PASS_SCRIPT 为黑名单");
+    // 代理获取执行脚本名称的
+    let PASS_SCRIPT = process.env.PASS_SCRIPT ? process.env.PASS_SCRIPT : '';
+    // 检测脚本在不在黑白名单
+    if (PASS_SCRIPT.split('&').indexOf(process.argv[1].split('/').reverse()[0]) !== -1) {
+        console.log("这里可以填写代理 PASS_SCRIPT为白名单");
+        bootstrap();
+        GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
+    } else if (NOT_TYPE) {
+        // 这里是活动的，如果你只是使用代理而没有使用活动请勿修改
+        if (NOT_TYPE) {
+            // QL_variable 项目的，执行活动必进来
+            NOT_CJ = process.env.NOT_CJ ? process.env.NOT_CJ : '';
+            NOT_LZ = process.env.NOT_LZ ? process.env.NOT_LZ : '';
+            NOT_LZ = NOT_LZ.split('&');
+            NOT_CJ = NOT_CJ.split('&');
+            bootstrap();
+            GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
+        }
+    } else {
+        console.log("这里也可以填写代理 PASS_SCRIPT 为黑名单");
+        bootstrap();
+        GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
+    }
+
 }
 //此处填写京东账号cookie。
 let CookieJDs = []
@@ -52,24 +88,27 @@ if (JSON.stringify(process.env).indexOf('GITHUB')>-1) {
 CookieJDs = [...new Set(CookieJDs.filter(item => !!item))]
 console.log(`\n====================共${CookieJDs.length}个京东账号Cookie=========\n`);
 console.log(`==================脚本执行- 北京时间(UTC+8)：${new Date(new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000).toLocaleString('zh', {hour12: false}).replace(' 24:',' 00:')}=====================\n`)
-if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
-for (let i = 0; i < CookieJDs.length; i++) {
-    if (!CookieJDs[i].match(/pt_pin=(.+?);/) || !CookieJDs[i].match(/pt_key=(.+?);/)) console.log(`\n提示:京东cookie 【${CookieJDs[i]}】填写不规范,可能会影响部分脚本正常使用。正确格式为: pt_key=xxx;pt_pin=xxx;（分号;不可少）\n`);
-    const index = (i + 1 === 1) ? '' : (i + 1);
-    if (NOT_TYPE === 'lz') {
-        jd_ck = CookieJDs[i].match(/pt_pin=(.+?);/)[1]
-        if (NOT_LZ.indexOf(jd_ck) > -1) {
-            console.log(jd_ck + "在LZ黑名单中,跳过本次线报执行")
-            continue
+if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {
+};
+if (NOT_TYPE) {
+    for (let i = 0; i < CookieJDs.length; i++) {
+        if (!CookieJDs[i].match(/pt_pin=(.+?);/) || !CookieJDs[i].match(/pt_key=(.+?);/)) console.log(`\n提示:京东cookie 【${CookieJDs[i]}】填写不规范,可能会影响部分脚本正常使用。正确格式为: pt_key=xxx;pt_pin=xxx;（分号;不可少）\n`);
+        const index = (i + 1 === 1) ? '' : (i + 1);
+        if (NOT_TYPE === 'lz') {
+            jd_ck = CookieJDs[i].match(/pt_pin=(.+?);/)[1]
+            if (NOT_LZ.indexOf(jd_ck) > -1) {
+                console.log(jd_ck + "在LZ黑名单中,跳过本次线报执行")
+                continue
+            }
+        } else if (NOT_TYPE === 'cj') {
+            jd_ck = CookieJDs[i].match(/pt_pin=(.+?);/)[1]
+            if (NOT_CJ.indexOf(jd_ck) > -1) {
+                console.log(jd_ck + "在CJ黑名单中,跳过本次线报执行")
+                continue
+            }
         }
-    } else if (NOT_TYPE === 'cj') {
-        jd_ck = CookieJDs[i].match(/pt_pin=(.+?);/)[1]
-        if (NOT_CJ.indexOf(jd_ck) > -1) {
-            console.log(jd_ck + "在CJ黑名单中,跳过本次线报执行")
-            continue
-        }
+        exports['CookieJD' + index] = CookieJDs[i].trim();
     }
-    exports['CookieJD' + index] = CookieJDs[i].trim();
 }
 
 // 以下为注入互助码环境变量（仅nodejs内起效）的代码
