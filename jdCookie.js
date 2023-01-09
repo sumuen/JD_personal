@@ -52,16 +52,15 @@ if (BAN_TIMING.split('&').indexOf(String(hours_ti)) > -1) {
         GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
     } else if (NOT_TYPE) {
         // 这里是活动的，如果你只是使用代理而没有使用活动请勿修改
-        if (NOT_TYPE) {
-            // QL_variable 项目的，执行活动必进来
-            NOT_CJ = process.env.NOT_CJ ? process.env.NOT_CJ : '';
-            NOT_LZ = process.env.NOT_LZ ? process.env.NOT_LZ : '';
-            NOT_LZ = NOT_LZ.split('&');
-            NOT_CJ = NOT_CJ.split('&');
-            // 下面两行和代理有关
-            bootstrap();
-            GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
-        }
+        // QL_variable 项目的，执行活动必进来
+        NOT_CJ = process.env.NOT_CJ ? process.env.NOT_CJ : '';
+        NOT_LZ = process.env.NOT_LZ ? process.env.NOT_LZ : '';
+        NOT_LZ = NOT_LZ.split('&');
+        NOT_CJ = NOT_CJ.split('&');
+        console.log('检测到活动类型执行');
+        // 下面两行和代理有关
+        bootstrap();
+        GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
     } else {
         console.log("这里也可以填写代理 PASS_SCRIPT 为黑名单");
         // 下面两行和代理有关
@@ -100,7 +99,7 @@ for (let i = 0; i < CookieJDs.length; i++) {
     if (!CookieJDs[i].match(/pt_pin=(.+?);/) || !CookieJDs[i].match(/pt_key=(.+?);/)) {
         console.log(`\n提示:京东cookie 【${CookieJDs[i]}】填写不规范,可能会影响部分脚本正常使用。正确格式为: pt_key=xxx;pt_pin=xxx;（分号;不可少）\n`);
         continue
-    } else if (NOT_TYPE) {
+    } else if (NOT_TYPE === 'lz') {
         var jd_ck = CookieJDs[i].match(/pt_pin=(.+?);/)[1]
         if (NOT_LZ.indexOf(jd_ck) > -1) {
             console.log(jd_ck + "在LZ黑名单中,跳过本次线报执行")
