@@ -3,7 +3,7 @@
 
 """
 File: jd_pqdtk.py(店铺签到简化版)
-Date: 2023/1/10 20:17
+Date: 2023/1/12 11:25
 Channel: https://t.me/InteTU
 Group: https://t.me/InteIJ
 cron: 0 0 * * *
@@ -121,9 +121,9 @@ def taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime):
         pq_data = requests.get(url, headers=headers, timeout=10, proxies={"https": JK_ALL_PROXY})
         # 筛选所有非200问题
         if pq_data.status_code == 403:
-            print("触发403异常停止一分钟")
-            time.sleep(60)
-            return []
+            print("触发403后边天数不再检测，请有时间手动检测")
+            msg += "触发403后边天数不再检测后面tk是否达到天数,退出任务，请有时间手动检测脚本\n"
+            return [403]
         elif pq_data.status_code != 200:
             print(f"触发状态码 {pq_data.status_code} 将删除店铺 {token}")
             msg += f"触发状态码 {pq_data.status_code} 将删除店铺 {token}\n"
@@ -174,6 +174,17 @@ def fo(cookie, token, venderId, activityId, typeId):
 
 
 def fotask(cookie, token, venderId, activityId, maximum, typeId, maxtime):
+    """
+
+    :param cookie:
+    :param token:
+    :param venderId:
+    :param activityId:
+    :param maximum:
+    :param typeId:
+    :param maxtime:
+    :return: 403结束
+    """
     aa = 0
     while True:
         ta = taskUrl(cookie, token, venderId, activityId, maximum, typeId, maxtime)
@@ -183,6 +194,8 @@ def fotask(cookie, token, venderId, activityId, maximum, typeId, maxtime):
             return ta
         elif ta and ta[0] == -2:
             aa += 1
+        if ta and ta[0] == 403:
+            return 403
         else:
             return ta
 
@@ -227,6 +240,8 @@ if __name__ == '__main__':
                     if su > 5:
                         print(f'CK{su2}连续获取五次零签到天数执行下一个CK')
                         break
+                elif su3 and su3[0] == -1:
+                    break
             except Exception as e:
                 print(e)
         su2 += 1
