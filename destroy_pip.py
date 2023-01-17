@@ -38,7 +38,7 @@ text2 = pip.read()
 re_file = re.findall('Location: (.*)', text2)[0].replace("\\", "/") + "/requests/sessions.py"
 pip.close()
 lin_file = read_txt(file_name=re_file)
-for_list = ["IP_ALL_PROXY = os.environ.get('IP_ALL_PROXY', None)", "if IP_ALL_PROXY:", "    tf = True",
+for_list = ["import re", "IP_ALL_PROXY = os.environ.get('IP_ALL_PROXY', None)", "if IP_ALL_PROXY:", "    tf = True",
             "    for i in os.environ.get('GLOBAL_AGENT_NO_PROXY', '').replace('.', '\.').replace('*', '.*?').split(','):",
             "        if re.search(i, url):",
             "            tf = False", "            break", "    if tf:",
