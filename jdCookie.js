@@ -13,7 +13,8 @@ export BAN_TIMING="0&1&2";
 
 脚本黑白名单 PASS_SCRIPT
 export PASS_SCRIPT="jd_fruit_task.js&jd_wsdlb.js";
-如果代理使用白名单，就把68 69行删了, 如果使用黑名单就把51 52 行删了或者前面加 // ，默认添加都走代理
+如果代理使用白名单，就把69 70行删了, 如果使用黑名单就把52 53 行删了或者前面加 // ，默认添加都走代理
+如果同时使用活动和代理不想活动走代理请注释或者删除 63 64行
 bootstrap();
 GLOBAL_AGENT.HTTP_PROXY = JK_ALL_PROXY;
 
@@ -115,3 +116,5 @@ for (let i = 0; i < CookieJDs.length; i++) {
     const index = (i + 1 === 1) ? '' : (i + 1);
     exports['CookieJD' + index] = CookieJDs[i].trim();
 }
+// 获取到cookie后屏蔽 使其他脚本引用时 获取不到环境变量[JD_COOKIE]
+process.env.JD_COOKIE = ''

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# @Time    : 2023/1/9 23:00
+# @Time    : 2023/1/17 14:00
 # @Belongs  : InteIJ群管理者所有
 # @File    : jdCookie.py
 # @Reason : 适应群内项目
 # @Revise : 适配代理和活动项目的个人定制版本
+# 请配合 destroy_pip.py脚本使用
 """
 添加代理变量 JK_ALL_PROXY
 export JK_ALL_PROXY="http://IP:端口";
@@ -15,7 +16,8 @@ export BAN_TIMING="0&1&2";
 
 脚本黑白名单 PASS_SCRIPT
 export PASS_SCRIPT="jd_fruit_task.js&jd_wsdlb.js";
-如果代理使用白名单，就把65行删了, 如果使用黑名单就把54 行删了或者前面加 # ，默认添加都走代理
+如果代理使用白名单，就把67行删了, 如果使用黑名单就把56 行删了或者前面加 # ，默认添加都走代理
+如果同时使用活动和代理不想活动走代理请注释或者删除 63行
 os.environ['ALL_PROXY'] = JK_ALL_PROXY
 
 专门适配活动参数的
@@ -51,18 +53,18 @@ else:
     if re.findall('(\w+\.py)', sys.argv[0])[0] in PASS_SCRIPT.split("&"):
         print("这里可以填写代理 PASS_SCRIPT为白名单")
         # 下面是代理可以删除
-        os.environ['ALL_PROXY'] = JK_ALL_PROXY
+        os.environ['IP_ALL_PROXY'] = JK_ALL_PROXY
     elif NOT_TYPE:
         # 这里是活动的，如果你只是使用代理而没有使用活动请勿修改
         NOT_CJ = os.environ.get('NOT_CJ', '').split('&')
         NOT_LZ = os.environ.get('NOT_LZ', '').split('&')
         print('检测到活动类型执行')
         # 下面是代理可以删除
-        os.environ['ALL_PROXY'] = JK_ALL_PROXY
+        os.environ['IP_ALL_PROXY'] = JK_ALL_PROXY
     else:
         print("这里也可以填写代理 PASS_SCRIPT 为黑名单")
         # 下面是代理可以删除
-        os.environ['ALL_PROXY'] = JK_ALL_PROXY
+        os.environ['IP_ALL_PROXY'] = JK_ALL_PROXY
 
 
 def ck_detection(JD_COOKIE: list):
@@ -114,6 +116,8 @@ def get_cookies():
     print(f"====================共{len(CookieJDs)}个京东账号Cookie=========\n")
     print(
         f"==================脚本执行- 北京时间(UTC+8)：{time.strftime('%Y/%m/%d %H:%M:%S', time.localtime())}=====================\n")
+    # 获取到cookie后屏蔽 使其他脚本引用时 获取不到环境变量[JD_COOKIE]
+    os.environ['JD_COOKIE'] = ''
     return CookieJDs
 
 
