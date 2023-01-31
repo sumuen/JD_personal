@@ -9,7 +9,7 @@ from datetime import datetime
 
 import requests
 
-from sendNotify import send
+
 
 try:
     xingkong = os.environ["xingkong"]
@@ -63,13 +63,4 @@ try:
         except Exception as e:
             print(f"账户 {up[0]} 星空签到异常 {str(e)}")
             msg += f"账户 {up[0]} 星空签到异常 {str(e)}\n"
-    # 执行完毕发送通知
-    title = "🗣消息提醒：星空签到"
-    msg = f"⏰{str(datetime.now())[:19]}\n" + msg
-    send(title, msg)
-except Exception as e:
-    print("星空签到失败,失败原因 ", str(e))
-    if str(e) == "list index out of range":
-        title = "🗣消息提醒：星空签到"
-        msg = f"⏰{str(datetime.now())[:19]}\n" + f"星空代理签到失败,失败原因 {e}"
-        send(title, msg)
+
