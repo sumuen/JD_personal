@@ -1,5 +1,7 @@
 //20 5,12,21 * * * m_jd_farm_automation.js
 //问题反馈:https://t.me/Wall_E_Channel
+require('global-agent/bootstrap');
+global.GLOBAL_AGENT.HTTP_PROXY="http://192.168.3.3:7080";
 const {Env} = require('./function/magic');
 const $ = new Env('M农场自动化');
 let level = process.env.M_JD_FARM_LEVEL ? process.env.M_JD_FARM_LEVEL * 1 : 2
