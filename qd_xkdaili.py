@@ -9,8 +9,6 @@ from datetime import datetime
 
 import requests
 
-
-
 try:
     xingkong = os.environ["xingkong"]
     headers = {
@@ -59,8 +57,8 @@ try:
                                      headers=headers, data=data, verify=False)
             txt = response.json()
             print("星空签到 ", txt['msg'])
-            msg += f"账户 {up[0]} 星空签到 {txt['msg']}\n"
         except Exception as e:
             print(f"账户 {up[0]} 星空签到异常 {str(e)}")
-            msg += f"账户 {up[0]} 星空签到异常 {str(e)}\n"
-
+except Exception as e:
+    print("星空签到失败,失败原因 ", str(e))
+   
