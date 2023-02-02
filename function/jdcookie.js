@@ -32,4 +32,4 @@ for (let i = 0; i < CookieJDs.length; i++) {
   const index = (i + 1 === 1) ? '' : (i + 1);
   exports['CookieJD' + index] = CookieJDs[i].trim();
 }
-console.log('>>>>>>>>>>>>>>Faker 提示：任务正常运行中>>>>>>>>>>>>>>>\n')
+console.log('>>>>>>>>>>>>>>沐恩 提示：任务正常运行中>>>>>>>>>>>>>>>\n')
