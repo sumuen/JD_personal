@@ -11,8 +11,6 @@
 59 59 23 * * *https://raw.githubusercontent.com/6dylan6/jdpro/main/jd_washbeans.js
 问题建议TG -> https://t.me/dylan_jdpro
 */
-require('global-agent/bootstrap');
-global.GLOBAL_AGENT.HTTP_PROXY="http://192.168.3.3:7080";
 if (process.env.DY_WASHBEANS != "true") {
     console.log('\n默认不运行,设置变量export DY_WASHBEANS="true"来运行\n')
     return
