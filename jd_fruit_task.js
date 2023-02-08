@@ -128,17 +128,17 @@ async function jdFruit() {
                 return
             }
             await doDailyTask();
-            await doTenWater(); //浇水十次
+            //await doTenWater(); //浇水十次
             await getFirstWaterAward(); //领取首次浇水奖励
-            await getTenWaterAward(); //领取10浇水奖励
+            //await getTenWaterAward(); //领取10浇水奖励
             await getWaterFriendGotAward(); //领取为2好友浇水奖励
             await duck();
-            if (!process.env.DO_TEN_WATER_AGAIN) {
-                console.log('执行再次浇水')
-                await doTenWaterAgain(); //再次浇水
-            } else {
-                console.log('不执行再次浇水，攒水滴')
-            }
+           // if (!process.env.DO_TEN_WATER_AGAIN) {
+            //    console.log('执行再次浇水')
+           //     await doTenWaterAgain(); //再次浇水
+           // } else {
+           //     console.log('不执行再次浇水，攒水滴')
+           // }
             await predictionFruit(); //预测水果成熟时间
         } else {
             console.log(`初始化农场数据异常, 请登录京东 app查看农场0元水果功能是否正常。`);
@@ -306,7 +306,7 @@ async function predictionFruit() {
     message += `【预测】${waterD === 1 ? '明天' : waterD === 2 ? '后天' : waterD + '天之后'}(${timeFormat(24 * 60 * 60 * 1000 * waterD + Date.now())}日)可兑换水果🍉`
 }
 //浇水十次
-async function doTenWater() {
+/*async function doTenWater() {
     jdFruitBeanCard = $.getdata('jdFruitBeanCard') ? $.getdata('jdFruitBeanCard') : jdFruitBeanCard;
     if ($.isNode() && process.env.FRUIT_BEAN_CARD) {
         jdFruitBeanCard = process.env.FRUIT_BEAN_CARD;
@@ -355,7 +355,7 @@ async function doTenWater() {
     } else {
         console.log('\n今日已完成10次浇水任务\n');
     }
-}
+}*/
 //领取首次浇水奖励
 async function getFirstWaterAward() {
     await taskInitForFarm();
@@ -374,7 +374,7 @@ async function getFirstWaterAward() {
     }
 }
 //领取十次浇水奖励
-async function getTenWaterAward() {
+/*async function getTenWaterAward() {
     //领取10次浇水奖励
     if (!$.farmTask.totalWaterTaskInit.f && $.farmTask.totalWaterTaskInit.totalWaterTaskTimes >= $.farmTask.totalWaterTaskInit.totalWaterTaskLimit) {
         await totalWaterTaskForFarm();
@@ -511,7 +511,7 @@ async function doTenWaterAgain() {
     } else {
         console.log("目前剩余水滴：【" + totalEnergy + "】g,不再继续浇水,保留部分水滴用于完成第二天【十次浇水得水滴】任务")
     }
-}
+}*/
 //领取阶段性水滴奖励
 function gotStageAward() {
     return new Promise(async resolve => {
