@@ -1,8 +1,6 @@
 /*
 #邀请领现金
-1
 需要定义环境变量 krlxjcode 指定助力1码  多个@隔开
-1
 [task_local]
 #邀请领现金
 11 11 11 11 * jd_yqlxj_help.js, tag=邀请领现金, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true*/
