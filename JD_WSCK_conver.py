@@ -34,7 +34,7 @@ def load_send():
         hadsend=False
 load_send()
 
-signurl="https://api.nolanstore.top/sign"
+signurl="http://192.168.3.6:9090/api/jdsign"
 if os.environ.get("SIGNURL")!=None:
     if os.environ.get("SIGNURL")!="":
         signurl=os.environ.get("SIGNURL")
