@@ -11,6 +11,7 @@ from urllib.parse import unquote
 """
 cron 57 21,9 * * *	
 """
+hadsend=True
 
 def printf(text):
     print(text)
@@ -18,18 +19,25 @@ def printf(text):
     
 def load_send():
     global send
+    global hadsend
     cur_path = os.path.abspath(os.path.dirname(__file__))
     sys.path.append(cur_path)
     if os.path.exists(cur_path + "/sendNotify.py"):
         try:
             from sendNotify import send
+            hadsend=True
         except:
-            send=False
-            printf("加载通知服务失败~")
+            printf("加载sendNotify.py的通知服务失败，请检查~")
+            hadsend=False
     else:
-        send=False
-        printf("加载通知服务失败~")
+        printf("加载通知服务失败,缺少sendNotify.py文件")
+        hadsend=False
 load_send()
+
+signurl="https://api.nolanstore.top/sign"
+if os.environ.get("SIGNURL")!=None:
+    if os.environ.get("SIGNURL")!="":
+        signurl=os.environ.get("SIGNURL")
 
 def send_notification(title, content,summary):
     # Add your own WxPusher API key here
@@ -91,7 +99,7 @@ def get_sign_wskey():
     }
     headers = {"user-agent": "JD4iPhone/167774 (iPhone; iOS 14.6; Scale/2.00)"}
     try:
-        url = "https://api.nolanstore.top/sign"
+        url = signurl
         data = post(url, headers=headers, json=body).json()
         sign = data['body']
     except Exception as error:
@@ -129,12 +137,15 @@ def getcookie_wskey(key):
     except Exception as error:
         print(f"【错误】{unquote(pin)}在获取cookie时：\n{error}")
         return "Error"
-    
-    if "app_open" in res['pt_key']:
-        cookie = f"pt_key={res['pt_key']};pt_pin={res['pt_pin']};"
-        return cookie
-    else:
-        ##printf("Error:"+str(res))
+        
+    try:
+        if "app_open" in res['pt_key']:
+            cookie = f"pt_key={res['pt_key']};pt_pin={res['pt_pin']};"
+            return cookie
+        else:        
+            return ("Error:"+str(res))
+    except Exception as error:
+        print(f"【错误】{unquote(pin)}在获取cookie时：\n{str(res)}")
         return "Error"
 
 
@@ -193,8 +204,9 @@ def subcookie(pt_pin, cookie, token ,envtype):
                 body = [{"value": cookie, "name": "JD_COOKIE"}]
                 post(url, json=body, headers=headers)
                 printf(f"新增cookie成功！pt_pin：{pt_pin}")
+
 def main():
-    printf("版本: 20230418_V2")
+    printf("版本: 20230524")
     printf("说明: 如果用Wxpusher通知需配置WP_APP_TOKEN_ONE和WP_APP_MAIN_UID，其中WP_APP_MAIN_UID是你的Wxpusher UID")
     printf("====================================")
     envtype=""
@@ -215,13 +227,16 @@ def main():
     if config=="":
         printf(f"无法判断使用环境，退出脚本!")
         return 
-        
+    printf("Sign服务器:"+signurl)    
     try:
-        if os.environ.get("WP_APP_TOKEN_ONE")=="" or os.environ.get("WP_APP_MAIN_UID")=="":
+        if os.environ.get("WP_APP_TOKEN_ONE")==None or os.environ.get("WP_APP_MAIN_UID")==None:
             printf('没有配置Wxpusher相关变量,将调用sendNotify.py发送通知')
         else:
-            printf('检测到已配置Wxpusher相关变量,将使用Wxpusher发送通知')
-            iswxpusher=True
+            if os.environ.get("WP_APP_TOKEN_ONE")=="" or os.environ.get("WP_APP_MAIN_UID")=="":
+                printf('没有配置Wxpusher相关变量,将调用sendNotify.py发送通知')
+            else:
+                printf('检测到已配置Wxpusher相关变量,将使用Wxpusher发送通知')
+                iswxpusher=True
     except:
         iswxpusher=False
 
@@ -241,21 +256,37 @@ def main():
     }
     datas = get(url, params=body, headers=headers).json()['data']
     for data in datas:
+        if data['status']!=0:
+            continue
         key = data['value']
-        if re.search('%', key):
-            key = unquote(key, 'utf-8')
-            
         pin = key.split(";")[0].split("=")[1]
+        newpin=pin
         cookie = getcookie_wskey(key)
         
+        if re.search('%', pin):
+            newpin = unquote(pin, 'utf-8')
+            
         if "app_open" in cookie:
-            #printf("转换成功:"cookie)            
-            subcookie(pin, cookie, token, envtype)
-            resurt1=resurt1+f"pt_pin更新成功：{pin}\n"
+            #printf("转换成功:"cookie)     
+            orgpin = cookie.split(";")[1].split("=")[1]            
+            subcookie(orgpin, cookie, token, envtype)
+            resurt1=resurt1+f"pt_pin更新成功：{newpin}\n"
         else:            
-            message = f"pin为{pin}的wskey可能过期了！"
-            printf(message)
-            resurt2=resurt2+f"pt_pin更新失败：{pin}\n"
+            if "fake_" in cookie:
+                message = f"pin为{newpin}的wskey过期了！"
+                printf(message)
+                url = 'http://127.0.0.1:5600/api/envs/disable'
+                try:
+                    body = [data['_id']]
+                except:   
+                    body = [data['id']]
+                put(url, json=body, headers=headers)                
+                printf(f"pin为{newpin}的wskey已禁用")
+                resurt2=resurt2+f"pin为{newpin}的wskey已禁用\n"
+            else:
+                message = f"pin为{newpin}的wskey转换失败！"
+                resurt2=resurt2+f"pin为{newpin}的wskey转换失败！\n"
+
                
     if resurt2!="": 
         resurt="👇👇👇👇👇转换异常👇👇👇👇👇\n"+resurt2+"\n"
@@ -267,9 +298,12 @@ def main():
                 summary="全部转换成功"
                 
         if iswxpusher:
-            send_notification("Rabbit JD_WSCK转换结果",resurt,summary)
+            send_notification("JD_WSCK转换结果",resurt,summary)
         else:
-            send("Rabbit JD_WSCK转换结果",resurt)
+            if hadsend:
+                send("JD_WSCK转换结果",resurt)
+            else:
+                printf("没有启用通知!")
 
 if __name__ == '__main__':
     main()
