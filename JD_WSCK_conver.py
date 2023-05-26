@@ -240,7 +240,7 @@ def main():
     except:
         iswxpusher=False
 
-    printf("\n===============开始转换JD_WSCK==============")
+    printf("\n===============开始转换JD_R_WSCK==============")
     resurt=""
     resurt1=""
     resurt2=""
@@ -251,7 +251,7 @@ def main():
     url = 'http://127.0.0.1:5600/api/envs'
     headers = {'Authorization': f'Bearer {token}'}
     body = {
-        'searchValue': 'JD_WSCK',
+        'searchValue': 'JD_R_WSCK',
         'Authorization': f'Bearer {token}'
     }
     datas = get(url, params=body, headers=headers).json()['data']
@@ -298,10 +298,10 @@ def main():
                 summary="全部转换成功"
                 
         if iswxpusher:
-            send_notification("JD_WSCK转换结果",resurt,summary)
+            send_notification("JD_R_WSCK转换结果",resurt,summary)
         else:
             if hadsend:
-                send("JD_WSCK转换结果",resurt)
+                send("JD_R_WSCK转换结果",resurt)
             else:
                 printf("没有启用通知!")
 
