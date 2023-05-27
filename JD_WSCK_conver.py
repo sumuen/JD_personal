@@ -168,8 +168,11 @@ def getcookie_wskey(key):
 
 def subcookie(pt_pin, cookie, token):
     if True:
+        reamrk=""
         if token!="":
             strptpin=pt_pin
+            if re.search('%', strptpin):
+                strptpin = unquote(strptpin, 'utf-8')
             url = 'http://127.0.0.1:5600/api/envs'
             headers = {'Authorization': f'Bearer {token}'}
             body = {
@@ -187,9 +190,13 @@ def subcookie(pt_pin, cookie, token):
                         body = {"name": "JD_COOKIE", "value": cookie, "id": data['id']}
                         isline=False
                     old = True
-                    reamrk=data['remarks']
+                    try:
+                        reamrk=data['remarks']
+                    except:
+                        reamrk=""
+
                     if reamrk!="" and not reamrk is None:
-                        strptpin=reamrk.split("@@")[0]
+                        strptpin=strptpin+"("+reamrk.split("@@")[0]+")"
                         
             if old:
                 put(url, json=body, headers=headers)
@@ -199,14 +206,15 @@ def subcookie(pt_pin, cookie, token):
                 else:
                     body = [body['id']]
                 put(url, json=body, headers=headers)
-                printf(f"更新cookie成功！pt_pin：{strptpin}")
+                printf(f"更新成功：{strptpin}")
             else:
                 body = [{"value": cookie, "name": "JD_COOKIE"}]
                 post(url, json=body, headers=headers)
-                printf(f"新增cookie成功！pt_pin：{strptpin}")
+                printf(f"新增成功：{strptpin}")
 
 def getRemark(pt_pin,token):
     strreturn=pt_pin
+    reamrk=""
     if token!="":
         url = 'http://127.0.0.1:5600/api/envs'
         headers = {'Authorization': f'Bearer {token}'}
@@ -217,18 +225,23 @@ def getRemark(pt_pin,token):
         datas = get(url, params=body, headers=headers).json()['data']
         for data in datas:
             if "pt_key" in data['value']:
-                reamrk=data['remarks']
-                break
-        strreturn=reamrk.split("@@")[0]
+                try:
+                    reamrk=data['remarks']
+                    break
+                except:
+                    pass
+        if not reamrk is None and reamrk!="":
+            strreturn=strreturn+"("+reamrk.split("@@")[0]+")"
 
     return strreturn
 
 def main():
-    printf("版本: 20230527")
+    printf("版本: 20230527V2")
     printf("说明: 如果用Wxpusher通知需配置WP_APP_TOKEN_ONE和WP_APP_MAIN_UID，其中WP_APP_MAIN_UID是你的Wxpusher UID")
     printf("====================================")
     config=""
     iswxpusher=False
+    counttime=0
     if os.path.exists("/ql/config/auth.json"):
         config="/ql/config/auth.json"
     
@@ -251,7 +264,6 @@ def main():
     except:
         iswxpusher=False
 
-    printf("\n===============开始转换JD_WSCK==============")
     resurt=""
     resurt1=""
     resurt2=""
@@ -266,6 +278,12 @@ def main():
         'Authorization': f'Bearer {token}'
     }
     datas = get(url, params=body, headers=headers).json()['data']
+    if len(datas)>0:
+        printf("\n===============开始转换JD_WSCK==============")
+    else:
+        printf("\n错误:没有需要转换的JD_WSCK，退出脚本!")
+        return
+    
     for data in datas:
         randomuserAgent()
         if data['status']!=0:
@@ -282,7 +300,7 @@ def main():
             #printf("转换成功:"cookie)     
             orgpin = cookie.split(";")[1].split("=")[1]            
             subcookie(orgpin, cookie, token)
-            resurt1=resurt1+f"pt_pin更新成功：{newpin}\n"
+            resurt1=resurt1+f"转换成功：{newpin}\n"
         else:            
             if "fake_" in cookie:
                 message = f"pin为{newpin}的wskey过期了！"
@@ -293,11 +311,11 @@ def main():
                 except:   
                     body = [data['id']]
                 put(url, json=body, headers=headers)                
-                printf(f"pin为{newpin}的wskey已禁用")
-                resurt2=resurt2+f"pin为{newpin}的wskey已禁用\n"
+                printf(f"禁用成功:{newpin}")
+                resurt2=resurt2+f"wskey已禁用:{newpin}\n"
             else:
-                message = f"pin为{newpin}的wskey转换失败！"
-                resurt2=resurt2+f"pin为{newpin}的wskey转换失败！\n"
+                message = f"转换失败:{newpin}"
+                resurt2=resurt2+f"转换失败:{newpin}\n"
 
                
     if resurt2!="": 
@@ -316,6 +334,12 @@ def main():
                 send("JD_WSCK转换结果",resurt)
             else:
                 printf("没有启用通知!")
+    else:
+        if resurt1!="": 
+            resurt=resurt+"👇👇👇👇👇转换成功👇👇👇👇👇\n"+resurt1
+
+    printf("\n\n===============转换结果==============\n")
+    printf(resurt)
 
 if __name__ == '__main__':    
     main()
